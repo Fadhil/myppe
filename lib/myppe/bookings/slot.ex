@@ -1,4 +1,4 @@
-defmodule Myppe.Booking.Slot do
+defmodule Myppe.Bookings.Slot do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,7 +6,7 @@ defmodule Myppe.Booking.Slot do
     field :date, :naive_datetime
     field :slot_id, :integer
 
-    belongs_to :pharmacy, Myppe.Booking.Pharmacy
+    belongs_to :pharmacy, Myppe.Bookings.Pharmacy
 
     timestamps()
   end

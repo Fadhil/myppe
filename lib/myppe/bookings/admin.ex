@@ -1,8 +1,8 @@
-defmodule Myppe.Booking.User do
+defmodule Myppe.Bookings.Admin do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "users" do
+  schema "admins" do
     field :email, :string
     field :password_hash, :string
 
@@ -10,8 +10,8 @@ defmodule Myppe.Booking.User do
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
+  def changeset(admin, attrs) do
+    admin
     |> cast(attrs, [:email, :password_hash])
     |> validate_required([:email, :password_hash])
   end

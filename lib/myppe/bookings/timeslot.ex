@@ -1,11 +1,11 @@
-defmodule Myppe.Booking.Timeslot do
+defmodule Myppe.Bookings.Timeslot do
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "timeslots" do
     field :quarter, :integer
 
-    belongs_to :slot, Myppe.Booking.Slot
+    belongs_to :slot, Myppe.Bookings.Slot
 
     timestamps()
   end
