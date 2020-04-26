@@ -1,4 +1,4 @@
-defmodule Myppe.Booking.LineItem do
+defmodule Myppe.Bookings.LineItem do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,7 +6,7 @@ defmodule Myppe.Booking.LineItem do
     field :price_cents, :integer
     field :quantity, :integer
 
-    belongs_to :product, Myppe.Booking.Product
+    belongs_to :product, Myppe.Bookings.Product
 
     timestamps()
   end

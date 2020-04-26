@@ -1,4 +1,4 @@
-defmodule Myppe.Booking.Pharmacy do
+defmodule Myppe.Inventories.Pharmacy do
   use Ecto.Schema
   import Ecto.Changeset
 

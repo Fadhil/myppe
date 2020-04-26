@@ -1,13 +1,12 @@
-defmodule Myppe.Booking.UserBooking do
+defmodule Myppe.Bookings.Booking do
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "bookings" do
     field :status, :string
-    field :timeslot_id, :id
 
-    belongs_to :user, Myppe.Booking.User
-    belongs_to :timeslow, Myppe.Booking.Timeslot
+    belongs_to :user, Myppe.Bookings.User
+    belongs_to :timeslot, Myppe.Bookings.Timeslot
 
     timestamps()
   end

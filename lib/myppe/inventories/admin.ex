@@ -1,4 +1,4 @@
-defmodule Myppe.Booking.Admin do
+defmodule Myppe.Inventories.Admin do
   use Ecto.Schema
   import Ecto.Changeset
 

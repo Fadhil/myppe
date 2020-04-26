@@ -1,4 +1,4 @@
-defmodule Myppe.Booking.User do
+defmodule Myppe.Bookings.User do
   use Ecto.Schema
   import Ecto.Changeset
 

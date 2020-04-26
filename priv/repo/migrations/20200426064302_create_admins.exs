@@ -1,5 +1,6 @@
 defmodule Myppe.Repo.Migrations.CreateAdmins do
   use Ecto.Migration
+  @timestamps_opts [type: :utc_datetime]
 
   def change do
     create table(:admins) do
