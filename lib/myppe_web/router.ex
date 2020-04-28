@@ -5,8 +5,8 @@ defmodule MyppeWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :authenticate do
-    plug Myppe.Auth.Plugs.Authentication
+  pipeline :authenticate_user do
+    plug Myppe.Auth.Plugs.AuthenticateUser
   end
 
   scope "/api", MyppeWeb do
@@ -16,7 +16,7 @@ defmodule MyppeWeb.Router do
   end
 
   scope "/api", MyppeWeb do
-    pipe_through [:api, :authenticate]
+    pipe_through [:api, :authenticate_user]
   end
 
   scope "/api/admin", MyppeWeb do
