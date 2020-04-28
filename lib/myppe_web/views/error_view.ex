@@ -4,7 +4,7 @@ defmodule MyppeWeb.ErrorView do
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.
   def render("500.json", _assigns) do
-    %{errors: %{detail: "Internal Server Error"}}
+    %{errors: %{message: "Internal Server Error"}}
   end
 
   def render("400.json", _assigns) do
@@ -13,6 +13,10 @@ defmodule MyppeWeb.ErrorView do
 
   def render("404.json", _assigns) do
     %{success: false, message: "Not Found"}
+  end
+
+  def render("error.json", %{message: message}) do
+    %{success: false, message: message}
   end
 
   # By default, Phoenix returns the status message from

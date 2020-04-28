@@ -15,7 +15,7 @@ defmodule Myppe.Auth.UserSession do
     |> cast(attrs, [:user_id])
   end
 
-  def registration_changeset(user_session, attrs \\ :empty) do
+  def create_changeset(user_session, attrs \\ :empty) do
     user_session
     |> changeset(attrs)
     |> put_change(:token, SecureRandom.urlsafe_base64())

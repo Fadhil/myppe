@@ -38,6 +38,11 @@ defmodule Myppe.Auth do
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
+  Gets a single user by email
+  """
+  def get_user_by_email!(email), do: Repo.get_by!(User, email: email)
+
+  @doc """
   Creates a user.
 
   ## Examples
@@ -243,7 +248,7 @@ defmodule Myppe.Auth do
   """
   def create_user_session(attrs \\ %{}) do
     %UserSession{}
-    |> UserSession.changeset(attrs)
+    |> UserSession.create_changeset(attrs)
     |> Repo.insert()
   end
 
