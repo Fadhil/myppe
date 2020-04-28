@@ -1,4 +1,4 @@
-defmodule Myppe.Booking do
+defmodule Myppe.Bookings do
   @moduledoc """
   The Booking context.
   """
@@ -6,7 +6,7 @@ defmodule Myppe.Booking do
   import Ecto.Query, warn: false
   alias Myppe.Repo
 
-  alias Myppe.Booking.Pharmacy
+  alias Myppe.Bookings.Pharmacy
 
   @doc """
   Returns the list of pharmacies.
@@ -102,7 +102,7 @@ defmodule Myppe.Booking do
     Pharmacy.changeset(pharmacy, %{})
   end
 
-  alias Myppe.Booking.Slot
+  alias Myppe.Bookings.Slot
 
   @doc """
   Returns the list of slots.
@@ -198,7 +198,7 @@ defmodule Myppe.Booking do
     Slot.changeset(slot, %{})
   end
 
-  alias Myppe.Booking.Timeslot
+  alias Myppe.Bookings.Timeslot
 
   @doc """
   Returns the list of timeslots.
@@ -294,7 +294,7 @@ defmodule Myppe.Booking do
     Timeslot.changeset(timeslot, %{})
   end
 
-  alias Myppe.Booking.User
+  alias Myppe.Bookings.User
 
   @doc """
   Returns the list of users.
@@ -390,7 +390,7 @@ defmodule Myppe.Booking do
     User.changeset(user, %{})
   end
 
-  alias Myppe.Booking.UserBooking
+  alias Myppe.Bookings.Booking
 
   @doc """
   Returns the list of bookings.
@@ -398,11 +398,11 @@ defmodule Myppe.Booking do
   ## Examples
 
       iex> list_bookings()
-      [%UserBooking{}, ...]
+      [%Booking{}, ...]
 
   """
   def list_bookings do
-    Repo.all(UserBooking)
+    Repo.all(Booking)
   end
 
   @doc """
@@ -413,13 +413,13 @@ defmodule Myppe.Booking do
   ## Examples
 
       iex> get_user_booking!(123)
-      %UserBooking{}
+      %Booking{}
 
       iex> get_user_booking!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_user_booking!(id), do: Repo.get!(UserBooking, id)
+  def get_user_booking!(id), do: Repo.get!(Booking, id)
 
   @doc """
   Creates a user_booking.
@@ -427,15 +427,15 @@ defmodule Myppe.Booking do
   ## Examples
 
       iex> create_user_booking(%{field: value})
-      {:ok, %UserBooking{}}
+      {:ok, %Booking{}}
 
       iex> create_user_booking(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   def create_user_booking(attrs \\ %{}) do
-    %UserBooking{}
-    |> UserBooking.changeset(attrs)
+    %Booking{}
+    |> Booking.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -445,15 +445,15 @@ defmodule Myppe.Booking do
   ## Examples
 
       iex> update_user_booking(user_booking, %{field: new_value})
-      {:ok, %UserBooking{}}
+      {:ok, %Booking{}}
 
       iex> update_user_booking(user_booking, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_user_booking(%UserBooking{} = user_booking, attrs) do
+  def update_user_booking(%Booking{} = user_booking, attrs) do
     user_booking
-    |> UserBooking.changeset(attrs)
+    |> Booking.changeset(attrs)
     |> Repo.update()
   end
 
@@ -463,13 +463,13 @@ defmodule Myppe.Booking do
   ## Examples
 
       iex> delete_user_booking(user_booking)
-      {:ok, %UserBooking{}}
+      {:ok, %Booking{}}
 
       iex> delete_user_booking(user_booking)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_user_booking(%UserBooking{} = user_booking) do
+  def delete_user_booking(%Booking{} = user_booking) do
     Repo.delete(user_booking)
   end
 
@@ -479,14 +479,14 @@ defmodule Myppe.Booking do
   ## Examples
 
       iex> change_user_booking(user_booking)
-      %Ecto.Changeset{source: %UserBooking{}}
+      %Ecto.Changeset{source: %Booking{}}
 
   """
-  def change_user_booking(%UserBooking{} = user_booking) do
-    UserBooking.changeset(user_booking, %{})
+  def change_user_booking(%Booking{} = user_booking) do
+    Booking.changeset(user_booking, %{})
   end
 
-  alias Myppe.Booking.LineItem
+  alias Myppe.Bookings.LineItem
 
   @doc """
   Returns the list of line_items.
@@ -582,7 +582,7 @@ defmodule Myppe.Booking do
     LineItem.changeset(line_item, %{})
   end
 
-  alias Myppe.Booking.Product
+  alias Myppe.Bookings.Product
 
   @doc """
   Returns the list of products.
@@ -678,7 +678,7 @@ defmodule Myppe.Booking do
     Product.changeset(product, %{})
   end
 
-  alias Myppe.Booking.OpeningHours
+  alias Myppe.Bookings.OpeningHours
 
   @doc """
   Returns the list of opening_hours.
@@ -774,7 +774,7 @@ defmodule Myppe.Booking do
     OpeningHours.changeset(opening_hours, %{})
   end
 
-  alias Myppe.Booking.Admin
+  alias Myppe.Bookings.Admin
 
   @doc """
   Returns the list of admins.
