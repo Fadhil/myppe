@@ -8,6 +8,10 @@ defmodule MyppeWeb.Router do
   scope "/api", MyppeWeb do
     pipe_through :api
     resources "/users", UserController, only: [:create, :show]
-    resources "/admins", AdminController, only: [:create, :show]
+  end
+
+  scope "/api/admin", MyppeWeb do
+    pipe_through :api
+    resources "/users", AdminController, only: [:create, :show]
   end
 end
