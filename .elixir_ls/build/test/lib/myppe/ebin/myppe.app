@@ -13,5 +13,5 @@
                         'Elixir.MyppeWeb.Router.Helpers',
                         'Elixir.MyppeWeb.UserSocket']},
               {registered,[]},
-              {vsn,"0.1.0"},
+              {vsn,"0.1.2"},
               {mod,{'Elixir.Myppe.Application',[]}}]}.
