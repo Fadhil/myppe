@@ -138,6 +138,8 @@ defmodule Myppe.Auth do
   """
   def get_admin!(id), do: Repo.get!(Admin, id)
 
+  def get_admin_by_email!(email), do: Repo.get_by!(Admin, email: email)
+
   @doc """
   Creates a admin.
 
@@ -339,5 +341,121 @@ defmodule Myppe.Auth do
   """
   def change_user_session(%UserSession{} = user_session) do
     UserSession.changeset(user_session, %{})
+  end
+
+  alias Myppe.Auth.AdminSession
+
+  @doc """
+  Returns the list of admin_sessions.
+
+  ## Examples
+
+      iex> list_admin_sessions()
+      [%AdminSession{}, ...]
+
+  """
+  def list_admin_sessions do
+    Repo.all(AdminSession)
+  end
+
+  @doc """
+  Gets a single admin_session.
+
+  Raises `Ecto.NoResultsError` if the Admin session does not exist.
+
+  ## Examples
+
+      iex> get_admin_session!(123)
+      %AdminSession{}
+
+      iex> get_admin_session!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+
+  def get_admin_session(conn) do
+    case get_auth_token(conn) do
+      {:ok, token} ->
+        get_admin_session_by_token(token)
+      error -> error
+    end
+  end
+
+  defp get_admin_session_by_token(token) do
+    session = Repo.get_by(AdminSession, token: token)
+              |> Repo.preload(:admin)
+    case session do
+      nil ->
+        {:error, nil}
+      session ->
+        {:ok, session}
+    end
+  end
+
+  def get_admin_session!(id), do: Repo.get!(AdminSession, id)
+
+  @doc """
+  Creates a admin_session.
+
+  ## Examples
+
+      iex> create_admin_session(%{field: value})
+      {:ok, %AdminSession{}}
+
+      iex> create_admin_session(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_admin_session(attrs \\ %{}) do
+    %AdminSession{}
+    |> AdminSession.create_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a admin_session.
+
+  ## Examples
+
+      iex> update_admin_session(admin_session, %{field: new_value})
+      {:ok, %AdminSession{}}
+
+      iex> update_admin_session(admin_session, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_admin_session(%AdminSession{} = admin_session, attrs) do
+    admin_session
+    |> AdminSession.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a admin_session.
+
+  ## Examples
+
+      iex> delete_admin_session(admin_session)
+      {:ok, %AdminSession{}}
+
+      iex> delete_admin_session(admin_session)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_admin_session(%AdminSession{} = admin_session) do
+    Repo.delete(admin_session)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking admin_session changes.
+
+  ## Examples
+
+      iex> change_admin_session(admin_session)
+      %Ecto.Changeset{source: %AdminSession{}}
+
+  """
+  def change_admin_session(%AdminSession{} = admin_session) do
+    AdminSession.changeset(admin_session, %{})
   end
 end

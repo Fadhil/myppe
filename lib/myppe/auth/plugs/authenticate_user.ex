@@ -1,5 +1,5 @@
 
-defmodule Myppe.Auth.Plugs.Authentication do
+defmodule Myppe.Auth.Plugs.AuthenticateUser do
   @moduledoc ~S"""
   This module is a plug that adds a current user if there is a session with a
   udser_id in it. Assigns `nil` if no user is found
