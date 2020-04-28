@@ -218,6 +218,48 @@ defmodule Myppe.Auth do
     Repo.all(UserSession)
   end
 
+  def get_user_session(conn) do
+    case get_auth_token(conn) do
+      {:ok, token} ->
+        get_user_session_by_token(token)
+      error -> error
+    end
+  end
+
+  defp get_user_session_by_token(token) do
+    session = Repo.get_by(UserSession, token: token)
+              |> Repo.preload(:user)
+    case session do
+      nil ->
+        {:error, nil}
+      session ->
+        {:ok, session}
+    end
+  end
+
+  def get_auth_token(conn) do
+    case extract_token(conn) do
+      {:ok, token} -> {:ok, token}
+      error -> error
+    end
+  end
+
+  defp extract_token(conn) do
+    case Plug.Conn.get_req_header(conn, "authorization") do
+      [auth_header] -> get_token_from_header(auth_header)
+      _ -> {:error, :missing_auth_header}
+    end
+  end
+
+  defp get_token_from_header(auth_header) do
+    {:ok, reg} = Regex.compile("Bearer\:?\s+(.*)$", "i")
+
+    case Regex.run(reg, auth_header) do
+      [_, match] -> {:ok, String.trim(match)}
+      _ -> {:error, "token not found"}
+    end
+  end
+
   @doc """
   Gets a single user_session.
 
