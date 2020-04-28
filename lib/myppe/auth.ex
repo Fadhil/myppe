@@ -372,6 +372,26 @@ defmodule Myppe.Auth do
       ** (Ecto.NoResultsError)
 
   """
+
+  def get_admin_session(conn) do
+    case get_auth_token(conn) do
+      {:ok, token} ->
+        get_admin_session_by_token(token)
+      error -> error
+    end
+  end
+
+  defp get_admin_session_by_token(token) do
+    session = Repo.get_by(AdminSession, token: token)
+              |> Repo.preload(:admin)
+    case session do
+      nil ->
+        {:error, nil}
+      session ->
+        {:ok, session}
+    end
+  end
+
   def get_admin_session!(id), do: Repo.get!(AdminSession, id)
 
   @doc """

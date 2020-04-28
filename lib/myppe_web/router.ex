@@ -5,6 +5,10 @@ defmodule MyppeWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :authenticate_admin do
+    plug Myppe.Auth.Plugs.AuthenticateAdmin
+  end
+
   pipeline :authenticate_user do
     plug Myppe.Auth.Plugs.AuthenticateUser
   end
@@ -19,9 +23,14 @@ defmodule MyppeWeb.Router do
     pipe_through [:api, :authenticate_user]
   end
 
+
   scope "/api/admin", MyppeWeb do
     pipe_through :api
     resources "/users", AdminController, only: [:create, :show]
     resources "/login", AdminSessionController, only: [:create, :show]
+  end
+
+  scope "/api/admin", MyppeWeb do
+    pipe_through [:api, :authenticate_admin]
   end
 end
