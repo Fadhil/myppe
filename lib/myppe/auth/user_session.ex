@@ -4,15 +4,20 @@ defmodule Myppe.Auth.UserSession do
 
   schema "user_sessions" do
     field :token, :string
-    field :user_id, :id
 
+    belongs_to :user, Myppe.Auth.User
     timestamps()
   end
 
   @doc false
   def changeset(user_session, attrs) do
     user_session
-    |> cast(attrs, [:token])
-    |> validate_required([:token])
+    |> cast(attrs, [:user_id])
+  end
+
+  def registration_changeset(user_session, attrs \\ :empty) do
+    user_session
+    |> changeset(attrs)
+    |> put_change(:token, SecureRandom.urlsafe_base64())
   end
 end
