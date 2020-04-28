@@ -197,4 +197,100 @@ defmodule Myppe.Auth do
   def change_admin(%Admin{} = admin) do
     Admin.changeset(admin, %{})
   end
+
+  alias Myppe.Auth.UserSession
+
+  @doc """
+  Returns the list of user_sessions.
+
+  ## Examples
+
+      iex> list_user_sessions()
+      [%UserSession{}, ...]
+
+  """
+  def list_user_sessions do
+    Repo.all(UserSession)
+  end
+
+  @doc """
+  Gets a single user_session.
+
+  Raises `Ecto.NoResultsError` if the User session does not exist.
+
+  ## Examples
+
+      iex> get_user_session!(123)
+      %UserSession{}
+
+      iex> get_user_session!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_user_session!(id), do: Repo.get!(UserSession, id)
+
+  @doc """
+  Creates a user_session.
+
+  ## Examples
+
+      iex> create_user_session(%{field: value})
+      {:ok, %UserSession{}}
+
+      iex> create_user_session(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_user_session(attrs \\ %{}) do
+    %UserSession{}
+    |> UserSession.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a user_session.
+
+  ## Examples
+
+      iex> update_user_session(user_session, %{field: new_value})
+      {:ok, %UserSession{}}
+
+      iex> update_user_session(user_session, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_session(%UserSession{} = user_session, attrs) do
+    user_session
+    |> UserSession.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a user_session.
+
+  ## Examples
+
+      iex> delete_user_session(user_session)
+      {:ok, %UserSession{}}
+
+      iex> delete_user_session(user_session)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_user_session(%UserSession{} = user_session) do
+    Repo.delete(user_session)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking user_session changes.
+
+  ## Examples
+
+      iex> change_user_session(user_session)
+      %Ecto.Changeset{source: %UserSession{}}
+
+  """
+  def change_user_session(%UserSession{} = user_session) do
+    UserSession.changeset(user_session, %{})
+  end
 end
