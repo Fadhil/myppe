@@ -40,5 +40,6 @@ defmodule MyppeWeb.Endpoint do
     key: "_myppe_key",
     signing_salt: "b6Ienuq3"
 
+  plug CORSPlug
   plug MyppeWeb.Router
 end
