@@ -187,4 +187,63 @@ defmodule Myppe.AuthTest do
       assert %Ecto.Changeset{} = Auth.change_user_session(user_session)
     end
   end
+
+  describe "admin_sessions" do
+    alias Myppe.Auth.AdminSession
+
+    @valid_attrs %{token: "some token"}
+    @update_attrs %{token: "some updated token"}
+    @invalid_attrs %{token: nil}
+
+    def admin_session_fixture(attrs \\ %{}) do
+      {:ok, admin_session} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Auth.create_admin_session()
+
+      admin_session
+    end
+
+    test "list_admin_sessions/0 returns all admin_sessions" do
+      admin_session = admin_session_fixture()
+      assert Auth.list_admin_sessions() == [admin_session]
+    end
+
+    test "get_admin_session!/1 returns the admin_session with given id" do
+      admin_session = admin_session_fixture()
+      assert Auth.get_admin_session!(admin_session.id) == admin_session
+    end
+
+    test "create_admin_session/1 with valid data creates a admin_session" do
+      assert {:ok, %AdminSession{} = admin_session} = Auth.create_admin_session(@valid_attrs)
+      assert admin_session.token == "some token"
+    end
+
+    test "create_admin_session/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Auth.create_admin_session(@invalid_attrs)
+    end
+
+    test "update_admin_session/2 with valid data updates the admin_session" do
+      admin_session = admin_session_fixture()
+      assert {:ok, %AdminSession{} = admin_session} = Auth.update_admin_session(admin_session, @update_attrs)
+      assert admin_session.token == "some updated token"
+    end
+
+    test "update_admin_session/2 with invalid data returns error changeset" do
+      admin_session = admin_session_fixture()
+      assert {:error, %Ecto.Changeset{}} = Auth.update_admin_session(admin_session, @invalid_attrs)
+      assert admin_session == Auth.get_admin_session!(admin_session.id)
+    end
+
+    test "delete_admin_session/1 deletes the admin_session" do
+      admin_session = admin_session_fixture()
+      assert {:ok, %AdminSession{}} = Auth.delete_admin_session(admin_session)
+      assert_raise Ecto.NoResultsError, fn -> Auth.get_admin_session!(admin_session.id) end
+    end
+
+    test "change_admin_session/1 returns a admin_session changeset" do
+      admin_session = admin_session_fixture()
+      assert %Ecto.Changeset{} = Auth.change_admin_session(admin_session)
+    end
+  end
 end

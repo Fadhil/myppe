@@ -22,5 +22,6 @@ defmodule MyppeWeb.Router do
   scope "/api/admin", MyppeWeb do
     pipe_through :api
     resources "/users", AdminController, only: [:create, :show]
+    resources "/login", AdminSessionController, only: [:create, :show]
   end
 end
