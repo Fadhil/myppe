@@ -19,7 +19,7 @@ defmodule MyppeWeb.UserSessionController do
         |> render("show.json", user_session: session)
       {:error, message} ->
         conn
-        |> put_status(:unprocessable_entity)
+        |> put_status(:unauthorized)
         |> put_view(MyppeWeb.ErrorView)
         |> render("error.json", message: message)
     end
