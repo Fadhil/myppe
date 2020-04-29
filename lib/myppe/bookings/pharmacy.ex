@@ -5,6 +5,8 @@ defmodule Myppe.Bookings.Pharmacy do
   schema "pharmacies" do
     field :name, :string
 
+    belongs_to :admin, Myppe.Bookings.Admin
+
     timestamps()
   end
 
