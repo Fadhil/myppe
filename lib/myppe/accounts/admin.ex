@@ -8,8 +8,11 @@ defmodule Myppe.Accounts.Admin do
     account_full_name account_phone social_media_whatsapp social_media_other
     social_media_website operating_hours
   )a
+
+  @required_attributes ~w(email name password_hash)a
   schema "admins" do
     field :email, :string
+    field :name, :string
     field :password, :string, virtual: true
     field :password_hash, :string
     field :pharmacy_type, :string, virtual: true
@@ -42,6 +45,12 @@ defmodule Myppe.Accounts.Admin do
     |> cast(attrs, [:email])
     |> validate_required([:email])
     |> unique_constraint(:email, name: :admins_email_index)
+  end
+
+  def create_changeset(admin, attrs) do
+    admin
+    |> cast(attrs, @required_attributes)
+    |> validate_required(@required_attributes)
   end
 
   def registration_changeset(admin, attrs) do
