@@ -27,6 +27,7 @@ myppe-*.tar
 # this depending on your deployment strategy.
 /priv/static/
 /.elixir_ls/*
+.elixir_ls/
 
 *.swo
 *.swp
