@@ -11,7 +11,7 @@ defmodule MyppeWeb.AdminController do
     render(conn, "index.json", admins: admins)
   end
 
-  def create(conn, %{"user" => admin_params}) do
+  def create(conn, admin_params) do
     with {:ok, %Admin{} = admin} <- Accounts.create_admin(admin_params) do
       conn
       |> put_status(:created)

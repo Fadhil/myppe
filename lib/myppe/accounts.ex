@@ -146,9 +146,15 @@ defmodule Myppe.Accounts do
 
   """
   def create_admin(attrs \\ %{}) do
-    %Admin{}
+    admin = %Admin{}
     |> Admin.registration_changeset(attrs)
-    |> Repo.insert()
+    case admin.valid? do
+      true ->
+        Repo.insert(admin)
+      false ->
+        {:error, admin}
+    end
+    # |> Repo.insert()
   end
 
   @doc """
