@@ -16,4 +16,10 @@ defmodule Myppe.Inventories.Stock do
     |> cast(attrs, [:quantity])
     |> validate_required([:quantity])
   end
+
+  def create_changeset(stock, attrs) do
+    stock
+    |> cast(attrs, [:quantity, :inventory_id, :product_id])
+    |> validate_required([:quantity, :inventory_id, :product_id])
+  end
 end

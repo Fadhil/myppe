@@ -341,6 +341,26 @@ defmodule Myppe.Inventories do
   def get_stock!(id), do: Repo.get!(Stock, id)
 
   @doc """
+  Gets stock for a specific product from pharmacy's inventory
+  """
+  def get_stock(pharmacy, product) do
+    get_stock_query(pharmacy, product)
+    |> Myppe.Repo.one
+  end
+
+  @doc """
+  Returns a query that gets stock for a specific product from pharmacy's inventory
+  """
+  def get_stock_query(pharmacy, product) do
+    from s in Myppe.Inventories.Stock,
+      join: i in assoc(s, :inventory),
+      join: ph in assoc(i, :pharmacy),
+      join: p in assoc(s, :product),
+      where: ph.id == ^pharmacy.id,
+      where: p.id == ^product.id
+  end
+
+  @doc """
   Creates a stock.
 
   ## Examples
@@ -354,7 +374,7 @@ defmodule Myppe.Inventories do
   """
   def create_stock(attrs \\ %{}) do
     %Stock{}
-    |> Stock.changeset(attrs)
+    |> Stock.create_changeset(attrs)
     |> Repo.insert()
   end
 
@@ -622,5 +642,27 @@ defmodule Myppe.Inventories do
       product ->
         Myppe.Inventories.update_product(%{name: attrs.name})
     end
+  end
+
+  def initialise_inventory(admin_id) do
+    admin =
+      Myppe.Inventories.get_admin!(admin_id)
+      |> Myppe.Repo.preload([pharmacy: [inventory: [:stocks]]])
+    products = Myppe.Inventories.list_products()
+    products
+    |> Enum.each(fn p ->
+      case get_stock(admin.pharmacy, p) do
+        nil ->
+          IO.puts "Adding #{p.name} to #{admin.pharmacy.display_name}'s inventory'"
+          create_stock(%{
+            quantity: 0,
+            product_id: p.id,
+            inventory_id: admin.pharmacy.id
+          })
+        _stock ->
+          IO.puts "#{p.name} already in initialised in #{admin.pharmacy.display_name}"
+      end
+    end)
+    {:ok, :initialised_products}
   end
 end

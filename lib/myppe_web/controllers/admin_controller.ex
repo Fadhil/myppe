@@ -12,7 +12,9 @@ defmodule MyppeWeb.AdminController do
   end
 
   def create(conn, admin_params) do
-    with {:ok, %Admin{} = admin} <- Accounts.create_admin(admin_params) do
+    with {:ok, %Admin{} = admin} <- Accounts.create_admin(admin_params),
+         {:ok, :initialised_products} <- Myppe.Inventories.initialise_inventory(admin.id)
+    do
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.admin_path(conn, :show, admin))
