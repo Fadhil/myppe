@@ -4,8 +4,8 @@ defmodule Myppe.Repo.Migrations.CreateOpeningHours do
   def change do
     create table(:opening_hours) do
       add :day, :integer, null: false
-      add :start_time, :string, null: false
-      add :end_time, :string, null: false
+      add :start_time, :string
+      add :end_time, :string
       add :pharmacy_id, references(:pharmacies, on_delete: :nothing)
 
       timestamps()

@@ -6,6 +6,9 @@ defmodule Myppe.Bookings.Pharmacy do
     field :name, :string
 
     belongs_to :admin, Myppe.Bookings.Admin
+    has_one :inventory, Myppe.Bookings.Inventory
+    has_many :stocks, through: [:inventory, :stocks]
+    has_many :opening_hours, Myppe.Bookings.OpeningHour
 
     timestamps()
   end

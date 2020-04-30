@@ -134,7 +134,8 @@ defmodule Myppe.Accounts do
   def get_admin!(id), do: Repo.get!(Admin, id)
 
   @doc """
-  Creates a admin.
+  Creates a admin if the registration changeset is valid.
+  This also creates a pharmacy with an inventory for the admin.
 
   ## Examples
 
@@ -150,11 +151,17 @@ defmodule Myppe.Accounts do
     |> Admin.registration_changeset(attrs)
     case admin.valid? do
       true ->
-        Repo.insert(admin)
+        admin_attrs =
+          admin.changes
+          |> Admin.map_to_nested_admin_attrs()
+        res =
+          %Admin{}
+          |> Admin.create_changeset(admin_attrs)
+        require IEx; IEx.pry()
+        Repo.insert(res)
       false ->
         {:error, admin}
     end
-    # |> Repo.insert()
   end
 
   @doc """
@@ -298,5 +305,197 @@ defmodule Myppe.Accounts do
   """
   def change_pharmacy(%Pharmacy{} = pharmacy) do
     Pharmacy.changeset(pharmacy, %{})
+  end
+
+  alias Myppe.Accounts.Inventory
+
+  @doc """
+  Returns the list of inventories.
+
+  ## Examples
+
+      iex> list_inventories()
+      [%Inventory{}, ...]
+
+  """
+  def list_inventories do
+    Repo.all(Inventory)
+  end
+
+  @doc """
+  Gets a single inventory.
+
+  Raises `Ecto.NoResultsError` if the Inventory does not exist.
+
+  ## Examples
+
+      iex> get_inventory!(123)
+      %Inventory{}
+
+      iex> get_inventory!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_inventory!(id), do: Repo.get!(Inventory, id)
+
+  @doc """
+  Creates a inventory.
+
+  ## Examples
+
+      iex> create_inventory(%{field: value})
+      {:ok, %Inventory{}}
+
+      iex> create_inventory(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_inventory(attrs \\ %{}) do
+    %Inventory{}
+    |> Inventory.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a inventory.
+
+  ## Examples
+
+      iex> update_inventory(inventory, %{field: new_value})
+      {:ok, %Inventory{}}
+
+      iex> update_inventory(inventory, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_inventory(%Inventory{} = inventory, attrs) do
+    inventory
+    |> Inventory.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a inventory.
+
+  ## Examples
+
+      iex> delete_inventory(inventory)
+      {:ok, %Inventory{}}
+
+      iex> delete_inventory(inventory)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_inventory(%Inventory{} = inventory) do
+    Repo.delete(inventory)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking inventory changes.
+
+  ## Examples
+
+      iex> change_inventory(inventory)
+      %Ecto.Changeset{source: %Inventory{}}
+
+  """
+  def change_inventory(%Inventory{} = inventory) do
+    Inventory.changeset(inventory, %{})
+  end
+
+  alias Myppe.Accounts.OpeningHour
+
+  @doc """
+  Returns the list of opening_hours.
+
+  ## Examples
+
+      iex> list_opening_hours()
+      [%OpeningHour{}, ...]
+
+  """
+  def list_opening_hours do
+    Repo.all(OpeningHour)
+  end
+
+  @doc """
+  Gets a single opening_hour.
+
+  Raises `Ecto.NoResultsError` if the Opening hour does not exist.
+
+  ## Examples
+
+      iex> get_opening_hour!(123)
+      %OpeningHour{}
+
+      iex> get_opening_hour!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_opening_hour!(id), do: Repo.get!(OpeningHour, id)
+
+  @doc """
+  Creates a opening_hour.
+
+  ## Examples
+
+      iex> create_opening_hour(%{field: value})
+      {:ok, %OpeningHour{}}
+
+      iex> create_opening_hour(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_opening_hour(attrs \\ %{}) do
+    %OpeningHour{}
+    |> OpeningHour.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a opening_hour.
+
+  ## Examples
+
+      iex> update_opening_hour(opening_hour, %{field: new_value})
+      {:ok, %OpeningHour{}}
+
+      iex> update_opening_hour(opening_hour, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_opening_hour(%OpeningHour{} = opening_hour, attrs) do
+    opening_hour
+    |> OpeningHour.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a opening_hour.
+
+  ## Examples
+
+      iex> delete_opening_hour(opening_hour)
+      {:ok, %OpeningHour{}}
+
+      iex> delete_opening_hour(opening_hour)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_opening_hour(%OpeningHour{} = opening_hour) do
+    Repo.delete(opening_hour)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking opening_hour changes.
+
+  ## Examples
+
+      iex> change_opening_hour(opening_hour)
+      %Ecto.Changeset{source: %OpeningHour{}}
+
+  """
+  def change_opening_hour(%OpeningHour{} = opening_hour) do
+    OpeningHour.changeset(opening_hour, %{})
   end
 end

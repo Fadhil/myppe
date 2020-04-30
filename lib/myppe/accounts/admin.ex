@@ -2,6 +2,12 @@ defmodule Myppe.Accounts.Admin do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @all_registration_fields ~w(pharmacy_type password pharmacy_size
+    cashier_counter address_line1 address_line2 post_code state moh_store_name
+    moh_license_number moh_is_retail account_display_name account_pharmacy_group
+    account_full_name account_phone social_media_whatsapp social_media_other
+    social_media_website operating_hours)a
+
   @required_for_registration ~w(pharmacy_type password pharmacy_size
     cashier_counter address_line1 post_code state moh_store_name
     moh_license_number moh_is_retail account_display_name account_pharmacy_group
@@ -9,11 +15,12 @@ defmodule Myppe.Accounts.Admin do
     social_media_website operating_hours
   )a
 
-  @required_attributes ~w(email name password_hash)a
+  @required_attributes ~w(email name password_hash phone)a
   schema "admins" do
     field :email, :string
     field :name, :string
     field :password, :string, virtual: true
+    field :phone, :string
     field :password_hash, :string
     field :pharmacy_type, :string, virtual: true
     field :pharmacy_size, :string, virtual: true
@@ -33,8 +40,9 @@ defmodule Myppe.Accounts.Admin do
     field :social_media_whatsapp, :string, virtual: true
     field :social_media_other, :string, virtual: true
     field :social_media_website, :string, virtual: true
-    field :operating_hours, {:array, :map}, virtual: true
+    field :operating_hours, :map, virtual: true
 
+    has_one :pharmacy, Myppe.Accounts.Pharmacy
 
     timestamps()
   end
@@ -50,14 +58,16 @@ defmodule Myppe.Accounts.Admin do
   def create_changeset(admin, attrs) do
     admin
     |> cast(attrs, @required_attributes)
+    |> cast_assoc(:pharmacy)
     |> validate_required(@required_attributes)
+    |> unique_constraint(:email, name: :admins_email_index)
   end
 
   def registration_changeset(admin, attrs) do
     attrs = attrs |> map_to_admin
     res = admin
     |> changeset(attrs)
-    |> cast(attrs, @required_for_registration)
+    |> cast(attrs, @all_registration_fields)
     |> validate_required(@required_for_registration)
     |> validate_length(:password, min: 6)
     |> put_password_hash()
@@ -96,9 +106,34 @@ defmodule Myppe.Accounts.Admin do
       "social_media_other" => attrs["social_media"]["other"],
       "social_media_website" => attrs["social_media"]["website"],
       "operating_hours" => attrs["operating_hours"]
+    }
+  end
 
-
-
+  def map_to_nested_admin_attrs(changes) do
+    %{
+      "email" =>  changes.email,
+      "name" => changes.account_full_name,
+      "password_hash" => changes.password_hash,
+      "phone" => changes.account_phone,
+      "pharmacy" => %{
+        "address_line1" => changes.address_line1,
+        "address_line2" => (if changes.address_line2, do: changes.address_line2, else: ""),
+        "cashier_counter" => changes.cashier_counter,
+        "display_name" => changes.account_display_name,
+        "group" => changes.account_pharmacy_group,
+        "is_retail" => changes.moh_is_retail,
+        "license_number" => changes.moh_license_number,
+        "pharmacy_type" => changes.pharmacy_type,
+        "postcode" => changes.post_code,
+        "size" => changes.pharmacy_size,
+        "social_media_whatsapp" => changes.social_media_whatsapp,
+        "social_media_other" => changes.social_media_other,
+        "social_media_website" => changes.social_media_website,
+        "state" => changes.state,
+        "name" => changes.moh_store_name,
+        "inventory" => %{},
+        "opening_hours" => changes.operating_hours
+      }
     }
   end
 end

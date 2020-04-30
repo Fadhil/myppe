@@ -1,10 +1,10 @@
-defmodule Myppe.Inventories.Inventory do
+defmodule Myppe.Accounts.Inventory do
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "inventories" do
-    belongs_to :pharmacy, Myppe.Inventories.Pharmacy
-    has_many :stocks, Myppe.Inventories.Stock
+    belongs_to :pharmacy, Myppe.Accounts.Pharmacy
+
     timestamps()
   end
 
