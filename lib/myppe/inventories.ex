@@ -230,6 +230,21 @@ defmodule Myppe.Inventories do
   def get_product!(id), do: Repo.get!(Product, id)
 
   @doc """
+  Gets a product by its code
+
+  ## Examples
+
+      iex> get_product_by_code(:three_ply)
+      %Product{}
+
+      iex> get_product!(:none_existent)
+      nil
+  """
+  def get_product_by_code(code) do
+    Repo.get_by(Product, code: code)
+  end
+
+  @doc """
   Creates a product.
 
   ## Examples
@@ -580,5 +595,32 @@ defmodule Myppe.Inventories do
   """
   def change_stock_update(%StockUpdate{} = stock_update) do
     StockUpdate.changeset(stock_update, %{})
+  end
+
+  @doc """
+  This initialises a set of 4 PPE items as products
+  """
+  def initialise_basic_products do
+    products = [
+      %{name: "3 Ply", code: "three_ply"},
+      %{name: "N95 Mask", code: "n95"},
+      %{name: "Hand Sanitizer", code: "sanitizer"},
+      %{name: "Gloves", code: "gloves"},
+    ]
+
+    IO.puts "Creating products\n"
+    products
+    |> Enum.each(fn p -> create_or_update_product(p) end)
+    IO.puts "Successfully created Products\n"
+  end
+
+  defp create_or_update_product(attrs) do
+    product = Myppe.Inventories.get_product_by_code(attrs.code)
+    case product do
+      nil ->
+        Myppe.Inventories.create_product(attrs)
+      product ->
+        Myppe.Inventories.update_product(%{name: attrs.name})
+    end
   end
 end
