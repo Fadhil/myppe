@@ -1,4 +1,4 @@
-defmodule MyppeWeb.AdminSessionController do
+defmodule MyppeWeb.Admin.AdminSessionController do
   use MyppeWeb, :controller
 
   alias Myppe.Auth

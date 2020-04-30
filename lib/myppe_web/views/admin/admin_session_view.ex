@@ -1,6 +1,6 @@
-defmodule MyppeWeb.AdminSessionView do
+defmodule MyppeWeb.Admin.AdminSessionView do
   use MyppeWeb, :view
-  alias MyppeWeb.AdminSessionView
+  alias MyppeWeb.Admin.AdminSessionView
 
   # def render("index.json", %{admin_sessions: admin_sessions}) do
   #   %{data: render_many(admin_sessions, AdminSessionView, "admin_session.json")}

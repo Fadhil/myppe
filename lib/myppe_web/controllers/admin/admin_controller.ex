@@ -1,4 +1,4 @@
-defmodule MyppeWeb.AdminController do
+defmodule MyppeWeb.Admin.AdminController do
   use MyppeWeb, :controller
 
   alias Myppe.Accounts
