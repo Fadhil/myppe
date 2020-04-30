@@ -4,9 +4,9 @@ defmodule Myppe.Inventories.Stock do
 
   schema "stocks" do
     field :quantity, :integer
-    field :product_id, :id
 
     belongs_to :inventory, Myppe.Inventories.Inventory
+    belongs_to :product, Myppe.Inventories.Product
     timestamps()
   end
 
