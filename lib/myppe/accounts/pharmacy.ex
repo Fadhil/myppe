@@ -22,6 +22,9 @@ defmodule Myppe.Accounts.Pharmacy do
     field :state, :string
     field :store_name, :string
 
+    belongs_to :admin, Myppe.Accounts.Admin
+    has_one :inventory, Myppe.Accounts.Pharmacy
+
     timestamps()
   end
 
@@ -29,6 +32,7 @@ defmodule Myppe.Accounts.Pharmacy do
   def changeset(pharmacy, attrs) do
     pharmacy
     |> cast(attrs, @all_attributes)
+    |> cast_assoc(:inventory)
     |> validate_required(@required_attributes)
   end
 end

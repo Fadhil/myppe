@@ -215,4 +215,61 @@ defmodule Myppe.AccountsTest do
       assert %Ecto.Changeset{} = Accounts.change_pharmacy(pharmacy)
     end
   end
+
+  describe "inventories" do
+    alias Myppe.Accounts.Inventory
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def inventory_fixture(attrs \\ %{}) do
+      {:ok, inventory} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Accounts.create_inventory()
+
+      inventory
+    end
+
+    test "list_inventories/0 returns all inventories" do
+      inventory = inventory_fixture()
+      assert Accounts.list_inventories() == [inventory]
+    end
+
+    test "get_inventory!/1 returns the inventory with given id" do
+      inventory = inventory_fixture()
+      assert Accounts.get_inventory!(inventory.id) == inventory
+    end
+
+    test "create_inventory/1 with valid data creates a inventory" do
+      assert {:ok, %Inventory{} = inventory} = Accounts.create_inventory(@valid_attrs)
+    end
+
+    test "create_inventory/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_inventory(@invalid_attrs)
+    end
+
+    test "update_inventory/2 with valid data updates the inventory" do
+      inventory = inventory_fixture()
+      assert {:ok, %Inventory{} = inventory} = Accounts.update_inventory(inventory, @update_attrs)
+    end
+
+    test "update_inventory/2 with invalid data returns error changeset" do
+      inventory = inventory_fixture()
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_inventory(inventory, @invalid_attrs)
+      assert inventory == Accounts.get_inventory!(inventory.id)
+    end
+
+    test "delete_inventory/1 deletes the inventory" do
+      inventory = inventory_fixture()
+      assert {:ok, %Inventory{}} = Accounts.delete_inventory(inventory)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_inventory!(inventory.id) end
+    end
+
+    test "change_inventory/1 returns a inventory changeset" do
+      inventory = inventory_fixture()
+      assert %Ecto.Changeset{} = Accounts.change_inventory(inventory)
+    end
+  end
 end

@@ -35,6 +35,7 @@ defmodule Myppe.Accounts.Admin do
     field :social_media_website, :string, virtual: true
     field :operating_hours, {:array, :map}, virtual: true
 
+    has_one :pharmacy, Myppe.Accounts.Pharmacy
 
     timestamps()
   end
@@ -50,6 +51,7 @@ defmodule Myppe.Accounts.Admin do
   def create_changeset(admin, attrs) do
     admin
     |> cast(attrs, @required_attributes)
+    |> cast_assoc(:pharmacy)
     |> validate_required(@required_attributes)
   end
 
