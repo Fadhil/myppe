@@ -678,7 +678,7 @@ defmodule Myppe.Bookings do
     Product.changeset(product, %{})
   end
 
-  alias Myppe.Bookings.OpeningHours
+  alias Myppe.Bookings.OpeningHour
 
   @doc """
   Returns the list of opening_hours.
@@ -686,11 +686,11 @@ defmodule Myppe.Bookings do
   ## Examples
 
       iex> list_opening_hours()
-      [%OpeningHours{}, ...]
+      [%OpeningHour{}, ...]
 
   """
   def list_opening_hours do
-    Repo.all(OpeningHours)
+    Repo.all(OpeningHour)
   end
 
   @doc """
@@ -701,13 +701,13 @@ defmodule Myppe.Bookings do
   ## Examples
 
       iex> get_opening_hours!(123)
-      %OpeningHours{}
+      %OpeningHour{}
 
       iex> get_opening_hours!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_opening_hours!(id), do: Repo.get!(OpeningHours, id)
+  def get_opening_hours!(id), do: Repo.get!(OpeningHour, id)
 
   @doc """
   Creates a opening_hours.
@@ -715,15 +715,15 @@ defmodule Myppe.Bookings do
   ## Examples
 
       iex> create_opening_hours(%{field: value})
-      {:ok, %OpeningHours{}}
+      {:ok, %OpeningHour{}}
 
       iex> create_opening_hours(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   def create_opening_hours(attrs \\ %{}) do
-    %OpeningHours{}
-    |> OpeningHours.changeset(attrs)
+    %OpeningHour{}
+    |> OpeningHour.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -733,15 +733,15 @@ defmodule Myppe.Bookings do
   ## Examples
 
       iex> update_opening_hours(opening_hours, %{field: new_value})
-      {:ok, %OpeningHours{}}
+      {:ok, %OpeningHour{}}
 
       iex> update_opening_hours(opening_hours, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_opening_hours(%OpeningHours{} = opening_hours, attrs) do
+  def update_opening_hours(%OpeningHour{} = opening_hours, attrs) do
     opening_hours
-    |> OpeningHours.changeset(attrs)
+    |> OpeningHour.changeset(attrs)
     |> Repo.update()
   end
 
@@ -751,13 +751,13 @@ defmodule Myppe.Bookings do
   ## Examples
 
       iex> delete_opening_hours(opening_hours)
-      {:ok, %OpeningHours{}}
+      {:ok, %OpeningHour{}}
 
       iex> delete_opening_hours(opening_hours)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_opening_hours(%OpeningHours{} = opening_hours) do
+  def delete_opening_hours(%OpeningHour{} = opening_hours) do
     Repo.delete(opening_hours)
   end
 
@@ -767,11 +767,11 @@ defmodule Myppe.Bookings do
   ## Examples
 
       iex> change_opening_hours(opening_hours)
-      %Ecto.Changeset{source: %OpeningHours{}}
+      %Ecto.Changeset{source: %OpeningHour{}}
 
   """
-  def change_opening_hours(%OpeningHours{} = opening_hours) do
-    OpeningHours.changeset(opening_hours, %{})
+  def change_opening_hours(%OpeningHour{} = opening_hours) do
+    OpeningHour.changeset(opening_hours, %{})
   end
 
   alias Myppe.Bookings.Admin

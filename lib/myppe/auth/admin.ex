@@ -4,8 +4,9 @@ defmodule Myppe.Auth.Admin do
 
   schema "admins" do
     field :email, :string
+    field :name, :string
     field :password_hash, :string
-    field :password, :string, virtual: true
+
 
     timestamps()
   end
@@ -19,8 +20,8 @@ defmodule Myppe.Auth.Admin do
 
   def registration_changeset(admin, attrs) do
     admin
-    |> cast(attrs, [:email, :password])
-    |> validate_required([:email])
+    |> changeset(attrs)
+    |> validate_required([:name])
     |> validate_length(:password, min: 6)
     |> put_password_hash()
   end

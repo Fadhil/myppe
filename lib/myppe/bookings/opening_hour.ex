@@ -1,4 +1,4 @@
-defmodule Myppe.Bookings.OpeningHours do
+defmodule Myppe.Bookings.OpeningHour do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,6 +6,7 @@ defmodule Myppe.Bookings.OpeningHours do
     field :day, :integer
     field :end_time, :string
     field :start_time, :string
+    field :is_open, :boolean
 
     belongs_to :pharmacy, Myppe.Bookings.Pharmacy
     timestamps()

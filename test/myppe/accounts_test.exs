@@ -130,4 +130,211 @@ defmodule Myppe.AccountsTest do
       assert %Ecto.Changeset{} = Accounts.change_admin(admin)
     end
   end
+
+  describe "pharmacies" do
+    alias Myppe.Accounts.Pharmacy
+
+    @valid_attrs %{address_line1: "some address_line1", address_line2: "some address_line2", cashier_counter: 42, display_name: "some display_name", group: "some group", is_retail: true, license_number: "some license_number", postcode: "some postcode", size: "some size", social_media_other: "some social_media_other", social_media_website: "some social_media_website", social_media_whatsapp: "some social_media_whatsapp", state: "some state", store_name: "some store_name"}
+    @update_attrs %{address_line1: "some updated address_line1", address_line2: "some updated address_line2", cashier_counter: 43, display_name: "some updated display_name", group: "some updated group", is_retail: false, license_number: "some updated license_number", postcode: "some updated postcode", size: "some updated size", social_media_other: "some updated social_media_other", social_media_website: "some updated social_media_website", social_media_whatsapp: "some updated social_media_whatsapp", state: "some updated state", store_name: "some updated store_name"}
+    @invalid_attrs %{address_line1: nil, address_line2: nil, cashier_counter: nil, display_name: nil, group: nil, is_retail: nil, license_number: nil, postcode: nil, size: nil, social_media_other: nil, social_media_website: nil, social_media_whatsapp: nil, state: nil, store_name: nil}
+
+    def pharmacy_fixture(attrs \\ %{}) do
+      {:ok, pharmacy} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Accounts.create_pharmacy()
+
+      pharmacy
+    end
+
+    test "list_pharmacies/0 returns all pharmacies" do
+      pharmacy = pharmacy_fixture()
+      assert Accounts.list_pharmacies() == [pharmacy]
+    end
+
+    test "get_pharmacy!/1 returns the pharmacy with given id" do
+      pharmacy = pharmacy_fixture()
+      assert Accounts.get_pharmacy!(pharmacy.id) == pharmacy
+    end
+
+    test "create_pharmacy/1 with valid data creates a pharmacy" do
+      assert {:ok, %Pharmacy{} = pharmacy} = Accounts.create_pharmacy(@valid_attrs)
+      assert pharmacy.address_line1 == "some address_line1"
+      assert pharmacy.address_line2 == "some address_line2"
+      assert pharmacy.cashier_counter == 42
+      assert pharmacy.display_name == "some display_name"
+      assert pharmacy.group == "some group"
+      assert pharmacy.is_retail == true
+      assert pharmacy.license_number == "some license_number"
+      assert pharmacy.postcode == "some postcode"
+      assert pharmacy.size == "some size"
+      assert pharmacy.social_media_other == "some social_media_other"
+      assert pharmacy.social_media_website == "some social_media_website"
+      assert pharmacy.social_media_whatsapp == "some social_media_whatsapp"
+      assert pharmacy.state == "some state"
+      assert pharmacy.store_name == "some store_name"
+    end
+
+    test "create_pharmacy/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_pharmacy(@invalid_attrs)
+    end
+
+    test "update_pharmacy/2 with valid data updates the pharmacy" do
+      pharmacy = pharmacy_fixture()
+      assert {:ok, %Pharmacy{} = pharmacy} = Accounts.update_pharmacy(pharmacy, @update_attrs)
+      assert pharmacy.address_line1 == "some updated address_line1"
+      assert pharmacy.address_line2 == "some updated address_line2"
+      assert pharmacy.cashier_counter == 43
+      assert pharmacy.display_name == "some updated display_name"
+      assert pharmacy.group == "some updated group"
+      assert pharmacy.is_retail == false
+      assert pharmacy.license_number == "some updated license_number"
+      assert pharmacy.postcode == "some updated postcode"
+      assert pharmacy.size == "some updated size"
+      assert pharmacy.social_media_other == "some updated social_media_other"
+      assert pharmacy.social_media_website == "some updated social_media_website"
+      assert pharmacy.social_media_whatsapp == "some updated social_media_whatsapp"
+      assert pharmacy.state == "some updated state"
+      assert pharmacy.store_name == "some updated store_name"
+    end
+
+    test "update_pharmacy/2 with invalid data returns error changeset" do
+      pharmacy = pharmacy_fixture()
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_pharmacy(pharmacy, @invalid_attrs)
+      assert pharmacy == Accounts.get_pharmacy!(pharmacy.id)
+    end
+
+    test "delete_pharmacy/1 deletes the pharmacy" do
+      pharmacy = pharmacy_fixture()
+      assert {:ok, %Pharmacy{}} = Accounts.delete_pharmacy(pharmacy)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_pharmacy!(pharmacy.id) end
+    end
+
+    test "change_pharmacy/1 returns a pharmacy changeset" do
+      pharmacy = pharmacy_fixture()
+      assert %Ecto.Changeset{} = Accounts.change_pharmacy(pharmacy)
+    end
+  end
+
+  describe "inventories" do
+    alias Myppe.Accounts.Inventory
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def inventory_fixture(attrs \\ %{}) do
+      {:ok, inventory} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Accounts.create_inventory()
+
+      inventory
+    end
+
+    test "list_inventories/0 returns all inventories" do
+      inventory = inventory_fixture()
+      assert Accounts.list_inventories() == [inventory]
+    end
+
+    test "get_inventory!/1 returns the inventory with given id" do
+      inventory = inventory_fixture()
+      assert Accounts.get_inventory!(inventory.id) == inventory
+    end
+
+    test "create_inventory/1 with valid data creates a inventory" do
+      assert {:ok, %Inventory{} = inventory} = Accounts.create_inventory(@valid_attrs)
+    end
+
+    test "create_inventory/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_inventory(@invalid_attrs)
+    end
+
+    test "update_inventory/2 with valid data updates the inventory" do
+      inventory = inventory_fixture()
+      assert {:ok, %Inventory{} = inventory} = Accounts.update_inventory(inventory, @update_attrs)
+    end
+
+    test "update_inventory/2 with invalid data returns error changeset" do
+      inventory = inventory_fixture()
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_inventory(inventory, @invalid_attrs)
+      assert inventory == Accounts.get_inventory!(inventory.id)
+    end
+
+    test "delete_inventory/1 deletes the inventory" do
+      inventory = inventory_fixture()
+      assert {:ok, %Inventory{}} = Accounts.delete_inventory(inventory)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_inventory!(inventory.id) end
+    end
+
+    test "change_inventory/1 returns a inventory changeset" do
+      inventory = inventory_fixture()
+      assert %Ecto.Changeset{} = Accounts.change_inventory(inventory)
+    end
+  end
+
+  describe "opening_hours" do
+    alias Myppe.Accounts.OpeningHour
+
+    @valid_attrs %{day: 42, end_time: "some end_time", is_open: true, start_time: "some start_time"}
+    @update_attrs %{day: 43, end_time: "some updated end_time", is_open: false, start_time: "some updated start_time"}
+    @invalid_attrs %{day: nil, end_time: nil, is_open: nil, start_time: nil}
+
+    def opening_hour_fixture(attrs \\ %{}) do
+      {:ok, opening_hour} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Accounts.create_opening_hour()
+
+      opening_hour
+    end
+
+    test "list_opening_hours/0 returns all opening_hours" do
+      opening_hour = opening_hour_fixture()
+      assert Accounts.list_opening_hours() == [opening_hour]
+    end
+
+    test "get_opening_hour!/1 returns the opening_hour with given id" do
+      opening_hour = opening_hour_fixture()
+      assert Accounts.get_opening_hour!(opening_hour.id) == opening_hour
+    end
+
+    test "create_opening_hour/1 with valid data creates a opening_hour" do
+      assert {:ok, %OpeningHour{} = opening_hour} = Accounts.create_opening_hour(@valid_attrs)
+      assert opening_hour.day == 42
+      assert opening_hour.end_time == "some end_time"
+      assert opening_hour.is_open == true
+      assert opening_hour.start_time == "some start_time"
+    end
+
+    test "create_opening_hour/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_opening_hour(@invalid_attrs)
+    end
+
+    test "update_opening_hour/2 with valid data updates the opening_hour" do
+      opening_hour = opening_hour_fixture()
+      assert {:ok, %OpeningHour{} = opening_hour} = Accounts.update_opening_hour(opening_hour, @update_attrs)
+      assert opening_hour.day == 43
+      assert opening_hour.end_time == "some updated end_time"
+      assert opening_hour.is_open == false
+      assert opening_hour.start_time == "some updated start_time"
+    end
+
+    test "update_opening_hour/2 with invalid data returns error changeset" do
+      opening_hour = opening_hour_fixture()
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_opening_hour(opening_hour, @invalid_attrs)
+      assert opening_hour == Accounts.get_opening_hour!(opening_hour.id)
+    end
+
+    test "delete_opening_hour/1 deletes the opening_hour" do
+      opening_hour = opening_hour_fixture()
+      assert {:ok, %OpeningHour{}} = Accounts.delete_opening_hour(opening_hour)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_opening_hour!(opening_hour.id) end
+    end
+
+    test "change_opening_hour/1 returns a opening_hour changeset" do
+      opening_hour = opening_hour_fixture()
+      assert %Ecto.Changeset{} = Accounts.change_opening_hour(opening_hour)
+    end
+  end
 end

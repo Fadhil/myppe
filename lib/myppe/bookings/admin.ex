@@ -4,7 +4,9 @@ defmodule Myppe.Bookings.Admin do
 
   schema "admins" do
     field :email, :string
-    field :password_hash, :string
+    field :phone, :string
+
+    has_one :pharmacy, Myppe.Bookings.Pharmacy
 
     timestamps()
   end
@@ -12,7 +14,7 @@ defmodule Myppe.Bookings.Admin do
   @doc false
   def changeset(admin, attrs) do
     admin
-    |> cast(attrs, [:email, :password_hash])
-    |> validate_required([:email, :password_hash])
+    |> cast(attrs, [:email])
+    |> validate_required([:email])
   end
 end

@@ -1,4 +1,4 @@
-defmodule Myppe.Inventories.Stock do
+defmodule Myppe.Bookings.Stock do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,7 +6,7 @@ defmodule Myppe.Inventories.Stock do
     field :quantity, :integer
     field :product_id, :id
 
-    belongs_to :inventory, Myppe.Inventories.Inventory
+    belongs_to :inventory, Myppe.Bookings.Inventory
     timestamps()
   end
 
