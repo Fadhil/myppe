@@ -38,6 +38,23 @@ defmodule Myppe.Inventories do
   def get_pharmacy!(id), do: Repo.get!(Pharmacy, id)
 
   @doc """
+  Gets the pharmacy for a given admin user
+  """
+  def get_pharmacy_for_user(admin) do
+    get_pharmacy_for_user_query(admin)
+    |> Myppe.Repo.one()
+  end
+
+  @doc """
+  Returns a query that gets the pharmacy for a given admin user
+  """
+  def get_pharmacy_for_user_query(admin) do
+    from p in Myppe.Inventories.Pharmacy,
+      join: a in assoc(p, :admin),
+      where: a.id == ^admin.id
+  end
+
+  @doc """
   Creates a pharmacy.
 
   ## Examples
@@ -323,6 +340,25 @@ defmodule Myppe.Inventories do
   def list_stocks do
     Repo.all(Stock)
   end
+
+  @doc """
+  Lists stocks for a given pharmacy
+  """
+  def list_stocks(%{id: id} = _pharmacy) do
+    list_stocks_query(id)
+    |> Myppe.Repo.all
+  end
+
+  @doc """
+  Returns a query to list all stocks for a pharmacy
+  """
+  def list_stocks_query(pharmacy_id) do
+    from s in Myppe.Inventories.Stock,
+      join: i in assoc(s, :inventory),
+      join: p in assoc(i, :pharmacy),
+      where: p.id == ^pharmacy_id
+  end
+
 
   @doc """
   Gets a single stock.
