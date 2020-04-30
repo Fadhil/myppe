@@ -24,13 +24,15 @@ defmodule MyppeWeb.Router do
   end
 
 
-  scope "/api/admin", MyppeWeb do
+  scope "/api/admin", MyppeWeb.Admin do
     pipe_through :api
     resources "/users", AdminController, only: [:create, :show]
     resources "/login", AdminSessionController, only: [:create, :show]
   end
 
-  scope "/api/admin", MyppeWeb do
+  scope "/api/admin", MyppeWeb.Admin do
     pipe_through [:api, :authenticate_admin]
+    get "/inventory", InventoryController, :index
+    put "/inventory", InventoryController, :update
   end
 end

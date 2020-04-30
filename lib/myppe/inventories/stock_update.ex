@@ -4,15 +4,15 @@ defmodule Myppe.Inventories.StockUpdate do
 
   schema "stock_updates" do
     field :change, :integer
-    field :stock_id, :id
 
+    belongs_to :stock, Myppe.Inventories.Stock
     timestamps()
   end
 
   @doc false
   def changeset(stock_update, attrs) do
     stock_update
-    |> cast(attrs, [:change])
-    |> validate_required([:change])
+    |> cast(attrs, [:change, :stock_id])
+    |> validate_required([:change, :stock_id])
   end
 end
