@@ -4,7 +4,7 @@ defmodule Myppe.Repo.Migrations.CreateAdminSessions do
   def change do
     create table(:admin_sessions) do
       add :token, :string
-      add :admin_id, references(:admins, on_delete: :nothing)
+      add :admin_id, references(:admins, on_delete: :delete_all)
 
       timestamps()
     end

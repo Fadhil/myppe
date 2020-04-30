@@ -4,7 +4,8 @@ defmodule Myppe.Inventories.Admin do
 
   schema "admins" do
     field :email, :string
-    field :password_hash, :string
+
+    has_one :pharmacy, Myppe.Inventories.Pharmacy
 
     timestamps()
   end
@@ -12,7 +13,7 @@ defmodule Myppe.Inventories.Admin do
   @doc false
   def changeset(admin, attrs) do
     admin
-    |> cast(attrs, [:email, :password_hash])
-    |> validate_required([:email, :password_hash])
+    |> cast(attrs, [:email])
+    |> validate_required([:email])
   end
 end

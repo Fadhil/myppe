@@ -2,9 +2,9 @@ defmodule Myppe.Accounts.Pharmacy do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @all_attributes [:size, :cashier_counter, :address_line1, :address_line2, :postcode, :state, :store_name, :display_name, :license_number, :is_retail, :group, :social_media_whatsapp, :social_media_other, :social_media_website]
+  @all_attributes [:size, :cashier_counter, :address_line1, :address_line2, :postcode, :state, :name, :display_name, :license_number, :is_retail, :group, :pharmacy_type, :social_media_whatsapp, :social_media_other, :social_media_website]
 
-  @required_attributes [:size, :cashier_counter, :address_line1, :postcode, :state, :store_name, :display_name, :license_number, :is_retail, :group]
+  @required_attributes [:size, :cashier_counter, :address_line1, :postcode, :state, :name, :display_name, :license_number, :is_retail, :group, :pharmacy_type]
 
   schema "pharmacies" do
     field :address_line1, :string
@@ -21,10 +21,11 @@ defmodule Myppe.Accounts.Pharmacy do
     field :social_media_website, :string
     field :social_media_whatsapp, :string
     field :state, :string
-    field :store_name, :string
+    field :name, :string
 
     belongs_to :admin, Myppe.Accounts.Admin
     has_one :inventory, Myppe.Accounts.Inventory
+    has_many :opening_hours, Myppe.Accounts.OpeningHour
 
     timestamps()
   end
@@ -34,6 +35,7 @@ defmodule Myppe.Accounts.Pharmacy do
     pharmacy
     |> cast(attrs, @all_attributes)
     |> cast_assoc(:inventory)
+    |> cast_assoc(:opening_hours)
     |> validate_required(@required_attributes)
   end
 end

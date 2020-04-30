@@ -15,11 +15,12 @@ defmodule Myppe.Accounts.Admin do
     social_media_website operating_hours
   )a
 
-  @required_attributes ~w(email name password_hash)a
+  @required_attributes ~w(email name password_hash phone)a
   schema "admins" do
     field :email, :string
     field :name, :string
     field :password, :string, virtual: true
+    field :phone, :string
     field :password_hash, :string
     field :pharmacy_type, :string, virtual: true
     field :pharmacy_size, :string, virtual: true
@@ -39,7 +40,7 @@ defmodule Myppe.Accounts.Admin do
     field :social_media_whatsapp, :string, virtual: true
     field :social_media_other, :string, virtual: true
     field :social_media_website, :string, virtual: true
-    field :operating_hours, {:array, :map}, virtual: true
+    field :operating_hours, :map, virtual: true
 
     has_one :pharmacy, Myppe.Accounts.Pharmacy
 
@@ -59,6 +60,7 @@ defmodule Myppe.Accounts.Admin do
     |> cast(attrs, @required_attributes)
     |> cast_assoc(:pharmacy)
     |> validate_required(@required_attributes)
+    |> unique_constraint(:email, name: :admins_email_index)
   end
 
   def registration_changeset(admin, attrs) do
@@ -112,6 +114,7 @@ defmodule Myppe.Accounts.Admin do
       "email" =>  changes.email,
       "name" => changes.account_full_name,
       "password_hash" => changes.password_hash,
+      "phone" => changes.account_phone,
       "pharmacy" => %{
         "address_line1" => changes.address_line1,
         "address_line2" => (if changes.address_line2, do: changes.address_line2, else: ""),
@@ -127,8 +130,9 @@ defmodule Myppe.Accounts.Admin do
         "social_media_other" => changes.social_media_other,
         "social_media_website" => changes.social_media_website,
         "state" => changes.state,
-        "store_name" => changes.moh_store_name,
-        "inventory" => %{}
+        "name" => changes.moh_store_name,
+        "inventory" => %{},
+        "opening_hours" => changes.operating_hours
       }
     }
   end

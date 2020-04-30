@@ -272,4 +272,69 @@ defmodule Myppe.AccountsTest do
       assert %Ecto.Changeset{} = Accounts.change_inventory(inventory)
     end
   end
+
+  describe "opening_hours" do
+    alias Myppe.Accounts.OpeningHour
+
+    @valid_attrs %{day: 42, end_time: "some end_time", is_open: true, start_time: "some start_time"}
+    @update_attrs %{day: 43, end_time: "some updated end_time", is_open: false, start_time: "some updated start_time"}
+    @invalid_attrs %{day: nil, end_time: nil, is_open: nil, start_time: nil}
+
+    def opening_hour_fixture(attrs \\ %{}) do
+      {:ok, opening_hour} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Accounts.create_opening_hour()
+
+      opening_hour
+    end
+
+    test "list_opening_hours/0 returns all opening_hours" do
+      opening_hour = opening_hour_fixture()
+      assert Accounts.list_opening_hours() == [opening_hour]
+    end
+
+    test "get_opening_hour!/1 returns the opening_hour with given id" do
+      opening_hour = opening_hour_fixture()
+      assert Accounts.get_opening_hour!(opening_hour.id) == opening_hour
+    end
+
+    test "create_opening_hour/1 with valid data creates a opening_hour" do
+      assert {:ok, %OpeningHour{} = opening_hour} = Accounts.create_opening_hour(@valid_attrs)
+      assert opening_hour.day == 42
+      assert opening_hour.end_time == "some end_time"
+      assert opening_hour.is_open == true
+      assert opening_hour.start_time == "some start_time"
+    end
+
+    test "create_opening_hour/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_opening_hour(@invalid_attrs)
+    end
+
+    test "update_opening_hour/2 with valid data updates the opening_hour" do
+      opening_hour = opening_hour_fixture()
+      assert {:ok, %OpeningHour{} = opening_hour} = Accounts.update_opening_hour(opening_hour, @update_attrs)
+      assert opening_hour.day == 43
+      assert opening_hour.end_time == "some updated end_time"
+      assert opening_hour.is_open == false
+      assert opening_hour.start_time == "some updated start_time"
+    end
+
+    test "update_opening_hour/2 with invalid data returns error changeset" do
+      opening_hour = opening_hour_fixture()
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_opening_hour(opening_hour, @invalid_attrs)
+      assert opening_hour == Accounts.get_opening_hour!(opening_hour.id)
+    end
+
+    test "delete_opening_hour/1 deletes the opening_hour" do
+      opening_hour = opening_hour_fixture()
+      assert {:ok, %OpeningHour{}} = Accounts.delete_opening_hour(opening_hour)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_opening_hour!(opening_hour.id) end
+    end
+
+    test "change_opening_hour/1 returns a opening_hour changeset" do
+      opening_hour = opening_hour_fixture()
+      assert %Ecto.Changeset{} = Accounts.change_opening_hour(opening_hour)
+    end
+  end
 end
