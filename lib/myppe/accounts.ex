@@ -157,7 +157,6 @@ defmodule Myppe.Accounts do
         res =
           %Admin{}
           |> Admin.create_changeset(admin_attrs)
-        require IEx; IEx.pry()
         Repo.insert(res)
       false ->
         {:error, admin}
