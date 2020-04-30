@@ -4,6 +4,7 @@ defmodule Myppe.Inventories do
   """
 
   import Ecto.Query, warn: false
+  alias Ecto.Multi
   alias Myppe.Repo
 
   alias Myppe.Inventories.Pharmacy
@@ -430,6 +431,41 @@ defmodule Myppe.Inventories do
     stock
     |> Stock.changeset(attrs)
     |> Repo.update()
+  end
+
+  @doc """
+  Updates a stock's quantity based on changes given and create a stock_update
+  to record the change. The two inserts should be transactional and only
+  succeed if both do
+  """
+  def update_and_record_stock_changes(%Pharmacy{} = pharmacy, changes) do
+    Enum.reduce(changes, Multi.new(), fn change, multi ->
+      Multi.run(
+        multi,
+        {:changes, change["code"]},
+        fn repo, _c ->
+          update_and_record_stock_change(pharmacy, change)
+        end
+      )
+    end)
+    |> Myppe.Repo.transaction()
+  end
+
+  @doc """
+  Updates a stocks quantity and records the changes in a Multi
+  """
+  def update_and_record_stock_change(pharmacy, change) do
+    product = get_product_by_code(change["code"])
+    stock = get_stock(pharmacy, product)
+    quantity = change["change"]
+
+    with {:ok, stock} <- update_stock(stock, %{quantity: stock.quantity + quantity}),
+         {:ok, _stock_update} <- create_stock_update(%{change: quantity, stock_id: stock.id}) do
+      {:ok, stock}
+    else
+      err ->
+        {:error, err}
+     end
   end
 
   @doc """

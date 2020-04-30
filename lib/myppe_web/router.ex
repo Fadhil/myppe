@@ -33,5 +33,6 @@ defmodule MyppeWeb.Router do
   scope "/api/admin", MyppeWeb.Admin do
     pipe_through [:api, :authenticate_admin]
     get "/inventory", InventoryController, :index
+    put "/inventory", InventoryController, :update
   end
 end
