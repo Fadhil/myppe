@@ -4,7 +4,7 @@ defmodule Myppe.MixProject do
   def project do
     [
       app: :myppe,
-      version: "0.1.7",
+      version: "0.1.8",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
