@@ -14,6 +14,7 @@ defmodule Myppe.Accounts.Pharmacy do
     field :group, :string
     field :is_retail, :boolean, default: false
     field :license_number, :string
+    field :pharmacy_type, :string
     field :postcode, :string
     field :size, :string
     field :social_media_other, :string
@@ -23,7 +24,7 @@ defmodule Myppe.Accounts.Pharmacy do
     field :store_name, :string
 
     belongs_to :admin, Myppe.Accounts.Admin
-    has_one :inventory, Myppe.Accounts.Pharmacy
+    has_one :inventory, Myppe.Accounts.Inventory
 
     timestamps()
   end

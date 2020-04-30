@@ -134,7 +134,8 @@ defmodule Myppe.Accounts do
   def get_admin!(id), do: Repo.get!(Admin, id)
 
   @doc """
-  Creates a admin.
+  Creates a admin if the registration changeset is valid.
+  This also creates a pharmacy with an inventory for the admin.
 
   ## Examples
 
@@ -150,11 +151,15 @@ defmodule Myppe.Accounts do
     |> Admin.registration_changeset(attrs)
     case admin.valid? do
       true ->
-        Repo.insert(admin)
+        admin_attrs =
+          admin.changes
+          |> Admin.map_to_nested_admin_attrs()
+        res =
+          %Admin{}
+          |> Admin.create_changeset(admin_attrs)
       false ->
         {:error, admin}
     end
-    # |> Repo.insert()
   end
 
   @doc """
