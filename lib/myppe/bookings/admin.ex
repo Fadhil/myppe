@@ -5,6 +5,7 @@ defmodule Myppe.Bookings.Admin do
   schema "admins" do
     field :email, :string
     field :phone, :string
+    field :name, :string
 
     has_one :pharmacy, Myppe.Bookings.Pharmacy
 

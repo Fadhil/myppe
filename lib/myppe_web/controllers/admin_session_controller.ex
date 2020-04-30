@@ -11,10 +11,13 @@ defmodule MyppeWeb.AdminSessionController do
     case Argon2.check_pass(admin, attrs["password"]) do
       {:ok, admin} ->
         {:ok, session} = Auth.create_admin_session(%{admin_id: admin.id})
+        admin =
+          Myppe.Accounts.get_admin!(admin.id)
+          |> Myppe.Repo.preload([pharmacy: [:opening_hours]])
         conn
         |> put_status(:created)
         |> put_resp_header("location", Routes.admin_session_path(conn, :show, session))
-        |> render("show.json", admin_session: session)
+        |> render("show.json", admin_session: session, admin: admin)
       {:error, message} ->
         conn
         |> put_status(:unauthorized)
@@ -24,8 +27,13 @@ defmodule MyppeWeb.AdminSessionController do
   end
 
   def show(conn, %{"id" => id}) do
-    admin_session = Auth.get_admin_session!(id)
-    render(conn, "show.json", admin_session: admin_session)
+    admin_session =
+      Auth.get_admin_session!(id)
+      |> Myppe.Repo.preload(:admin)
+    admin =
+      Myppe.Accounts.get_admin!(admin_session.admin.id)
+      |> Myppe.Repo.preload([pharmacy: [:opening_hours]])
+    render(conn, "show.json", admin_session: admin_session, admin: admin)
   end
 
   def update(conn, %{"id" => id, "admin_session" => admin_session_params}) do
