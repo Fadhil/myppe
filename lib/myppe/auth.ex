@@ -138,7 +138,7 @@ defmodule Myppe.Auth do
   """
   def get_admin!(id), do: Repo.get!(Admin, id)
 
-  def get_admin_by_email!(email), do: Repo.get_by!(Admin, email: email)
+  def get_admin_by_email!(email), do: Repo.get_by(Admin, email: email)
 
   @doc """
   Creates a admin.

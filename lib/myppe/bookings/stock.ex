@@ -4,9 +4,9 @@ defmodule Myppe.Bookings.Stock do
 
   schema "stocks" do
     field :quantity, :integer
-    field :product_id, :id
 
     belongs_to :inventory, Myppe.Bookings.Inventory
+    belongs_to :product, Myppe.Bookings.Product
     timestamps()
   end
 

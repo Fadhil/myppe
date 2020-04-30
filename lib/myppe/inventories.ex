@@ -4,6 +4,7 @@ defmodule Myppe.Inventories do
   """
 
   import Ecto.Query, warn: false
+  alias Ecto.Multi
   alias Myppe.Repo
 
   alias Myppe.Inventories.Pharmacy
@@ -36,6 +37,23 @@ defmodule Myppe.Inventories do
 
   """
   def get_pharmacy!(id), do: Repo.get!(Pharmacy, id)
+
+  @doc """
+  Gets the pharmacy for a given admin user
+  """
+  def get_pharmacy_for_user(admin) do
+    get_pharmacy_for_user_query(admin)
+    |> Myppe.Repo.one()
+  end
+
+  @doc """
+  Returns a query that gets the pharmacy for a given admin user
+  """
+  def get_pharmacy_for_user_query(admin) do
+    from p in Myppe.Inventories.Pharmacy,
+      join: a in assoc(p, :admin),
+      where: a.id == ^admin.id
+  end
 
   @doc """
   Creates a pharmacy.
@@ -230,6 +248,21 @@ defmodule Myppe.Inventories do
   def get_product!(id), do: Repo.get!(Product, id)
 
   @doc """
+  Gets a product by its code
+
+  ## Examples
+
+      iex> get_product_by_code(:three_ply)
+      %Product{}
+
+      iex> get_product!(:none_existent)
+      nil
+  """
+  def get_product_by_code(code) do
+    Repo.get_by(Product, code: code)
+  end
+
+  @doc """
   Creates a product.
 
   ## Examples
@@ -310,6 +343,25 @@ defmodule Myppe.Inventories do
   end
 
   @doc """
+  Lists stocks for a given pharmacy
+  """
+  def list_stocks(%{id: id} = _pharmacy) do
+    list_stocks_query(id)
+    |> Myppe.Repo.all
+  end
+
+  @doc """
+  Returns a query to list all stocks for a pharmacy
+  """
+  def list_stocks_query(pharmacy_id) do
+    from s in Myppe.Inventories.Stock,
+      join: i in assoc(s, :inventory),
+      join: p in assoc(i, :pharmacy),
+      where: p.id == ^pharmacy_id
+  end
+
+
+  @doc """
   Gets a single stock.
 
   Raises `Ecto.NoResultsError` if the Stock does not exist.
@@ -326,6 +378,26 @@ defmodule Myppe.Inventories do
   def get_stock!(id), do: Repo.get!(Stock, id)
 
   @doc """
+  Gets stock for a specific product from pharmacy's inventory
+  """
+  def get_stock(pharmacy, product) do
+    get_stock_query(pharmacy, product)
+    |> Myppe.Repo.one
+  end
+
+  @doc """
+  Returns a query that gets stock for a specific product from pharmacy's inventory
+  """
+  def get_stock_query(pharmacy, product) do
+    from s in Myppe.Inventories.Stock,
+      join: i in assoc(s, :inventory),
+      join: ph in assoc(i, :pharmacy),
+      join: p in assoc(s, :product),
+      where: ph.id == ^pharmacy.id,
+      where: p.id == ^product.id
+  end
+
+  @doc """
   Creates a stock.
 
   ## Examples
@@ -339,7 +411,7 @@ defmodule Myppe.Inventories do
   """
   def create_stock(attrs \\ %{}) do
     %Stock{}
-    |> Stock.changeset(attrs)
+    |> Stock.create_changeset(attrs)
     |> Repo.insert()
   end
 
@@ -359,6 +431,41 @@ defmodule Myppe.Inventories do
     stock
     |> Stock.changeset(attrs)
     |> Repo.update()
+  end
+
+  @doc """
+  Updates a stock's quantity based on changes given and create a stock_update
+  to record the change. The two inserts should be transactional and only
+  succeed if both do
+  """
+  def update_and_record_stock_changes(%Pharmacy{} = pharmacy, changes) do
+    Enum.reduce(changes, Multi.new(), fn change, multi ->
+      Multi.run(
+        multi,
+        {:changes, change["code"]},
+        fn repo, _c ->
+          update_and_record_stock_change(pharmacy, change)
+        end
+      )
+    end)
+    |> Myppe.Repo.transaction()
+  end
+
+  @doc """
+  Updates a stocks quantity and records the changes in a Multi
+  """
+  def update_and_record_stock_change(pharmacy, change) do
+    product = get_product_by_code(change["code"])
+    stock = get_stock(pharmacy, product)
+    quantity = change["change"]
+
+    with {:ok, stock} <- update_stock(stock, %{quantity: stock.quantity + quantity}),
+         {:ok, _stock_update} <- create_stock_update(%{change: quantity, stock_id: stock.id}) do
+      {:ok, stock}
+    else
+      err ->
+        {:error, err}
+     end
   end
 
   @doc """
@@ -580,5 +687,54 @@ defmodule Myppe.Inventories do
   """
   def change_stock_update(%StockUpdate{} = stock_update) do
     StockUpdate.changeset(stock_update, %{})
+  end
+
+  @doc """
+  This initialises a set of 4 PPE items as products
+  """
+  def initialise_basic_products do
+    products = [
+      %{name: "3 Ply", code: "three_ply"},
+      %{name: "N95 Mask", code: "n95"},
+      %{name: "Hand Sanitizer", code: "sanitizer"},
+      %{name: "Gloves", code: "gloves"},
+    ]
+
+    IO.puts "Creating products\n"
+    products
+    |> Enum.each(fn p -> create_or_update_product(p) end)
+    IO.puts "Successfully created Products\n"
+  end
+
+  defp create_or_update_product(attrs) do
+    product = Myppe.Inventories.get_product_by_code(attrs.code)
+    case product do
+      nil ->
+        Myppe.Inventories.create_product(attrs)
+      product ->
+        Myppe.Inventories.update_product(%{name: attrs.name})
+    end
+  end
+
+  def initialise_inventory(admin_id) do
+    admin =
+      Myppe.Inventories.get_admin!(admin_id)
+      |> Myppe.Repo.preload([pharmacy: [inventory: [:stocks]]])
+    products = Myppe.Inventories.list_products()
+    products
+    |> Enum.each(fn p ->
+      case get_stock(admin.pharmacy, p) do
+        nil ->
+          IO.puts "Adding #{p.name} to #{admin.pharmacy.display_name}'s inventory'"
+          create_stock(%{
+            quantity: 0,
+            product_id: p.id,
+            inventory_id: admin.pharmacy.id
+          })
+        _stock ->
+          IO.puts "#{p.name} already in initialised in #{admin.pharmacy.display_name}"
+      end
+    end)
+    {:ok, :initialised_products}
   end
 end

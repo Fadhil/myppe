@@ -1,6 +1,6 @@
-defmodule MyppeWeb.AdminView do
+defmodule MyppeWeb.Admin.AdminView do
   use MyppeWeb, :view
-  alias MyppeWeb.AdminView
+  alias MyppeWeb.Admin.AdminView
 
   def render("index.json", %{admins: admins}) do
     %{success: true, data: render_many(admins, AdminView, "admin.json")}

@@ -4,6 +4,7 @@ defmodule Myppe.Inventories.Pharmacy do
 
   schema "pharmacies" do
     field :name, :string
+    field :display_name, :string
 
     belongs_to :admin, Myppe.Inventories.Admin
     has_one :inventory, Myppe.Inventories.Inventory
