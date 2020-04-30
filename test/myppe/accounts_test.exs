@@ -130,4 +130,89 @@ defmodule Myppe.AccountsTest do
       assert %Ecto.Changeset{} = Accounts.change_admin(admin)
     end
   end
+
+  describe "pharmacies" do
+    alias Myppe.Accounts.Pharmacy
+
+    @valid_attrs %{address_line1: "some address_line1", address_line2: "some address_line2", cashier_counter: 42, display_name: "some display_name", group: "some group", is_retail: true, license_number: "some license_number", postcode: "some postcode", size: "some size", social_media_other: "some social_media_other", social_media_website: "some social_media_website", social_media_whatsapp: "some social_media_whatsapp", state: "some state", store_name: "some store_name"}
+    @update_attrs %{address_line1: "some updated address_line1", address_line2: "some updated address_line2", cashier_counter: 43, display_name: "some updated display_name", group: "some updated group", is_retail: false, license_number: "some updated license_number", postcode: "some updated postcode", size: "some updated size", social_media_other: "some updated social_media_other", social_media_website: "some updated social_media_website", social_media_whatsapp: "some updated social_media_whatsapp", state: "some updated state", store_name: "some updated store_name"}
+    @invalid_attrs %{address_line1: nil, address_line2: nil, cashier_counter: nil, display_name: nil, group: nil, is_retail: nil, license_number: nil, postcode: nil, size: nil, social_media_other: nil, social_media_website: nil, social_media_whatsapp: nil, state: nil, store_name: nil}
+
+    def pharmacy_fixture(attrs \\ %{}) do
+      {:ok, pharmacy} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Accounts.create_pharmacy()
+
+      pharmacy
+    end
+
+    test "list_pharmacies/0 returns all pharmacies" do
+      pharmacy = pharmacy_fixture()
+      assert Accounts.list_pharmacies() == [pharmacy]
+    end
+
+    test "get_pharmacy!/1 returns the pharmacy with given id" do
+      pharmacy = pharmacy_fixture()
+      assert Accounts.get_pharmacy!(pharmacy.id) == pharmacy
+    end
+
+    test "create_pharmacy/1 with valid data creates a pharmacy" do
+      assert {:ok, %Pharmacy{} = pharmacy} = Accounts.create_pharmacy(@valid_attrs)
+      assert pharmacy.address_line1 == "some address_line1"
+      assert pharmacy.address_line2 == "some address_line2"
+      assert pharmacy.cashier_counter == 42
+      assert pharmacy.display_name == "some display_name"
+      assert pharmacy.group == "some group"
+      assert pharmacy.is_retail == true
+      assert pharmacy.license_number == "some license_number"
+      assert pharmacy.postcode == "some postcode"
+      assert pharmacy.size == "some size"
+      assert pharmacy.social_media_other == "some social_media_other"
+      assert pharmacy.social_media_website == "some social_media_website"
+      assert pharmacy.social_media_whatsapp == "some social_media_whatsapp"
+      assert pharmacy.state == "some state"
+      assert pharmacy.store_name == "some store_name"
+    end
+
+    test "create_pharmacy/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_pharmacy(@invalid_attrs)
+    end
+
+    test "update_pharmacy/2 with valid data updates the pharmacy" do
+      pharmacy = pharmacy_fixture()
+      assert {:ok, %Pharmacy{} = pharmacy} = Accounts.update_pharmacy(pharmacy, @update_attrs)
+      assert pharmacy.address_line1 == "some updated address_line1"
+      assert pharmacy.address_line2 == "some updated address_line2"
+      assert pharmacy.cashier_counter == 43
+      assert pharmacy.display_name == "some updated display_name"
+      assert pharmacy.group == "some updated group"
+      assert pharmacy.is_retail == false
+      assert pharmacy.license_number == "some updated license_number"
+      assert pharmacy.postcode == "some updated postcode"
+      assert pharmacy.size == "some updated size"
+      assert pharmacy.social_media_other == "some updated social_media_other"
+      assert pharmacy.social_media_website == "some updated social_media_website"
+      assert pharmacy.social_media_whatsapp == "some updated social_media_whatsapp"
+      assert pharmacy.state == "some updated state"
+      assert pharmacy.store_name == "some updated store_name"
+    end
+
+    test "update_pharmacy/2 with invalid data returns error changeset" do
+      pharmacy = pharmacy_fixture()
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_pharmacy(pharmacy, @invalid_attrs)
+      assert pharmacy == Accounts.get_pharmacy!(pharmacy.id)
+    end
+
+    test "delete_pharmacy/1 deletes the pharmacy" do
+      pharmacy = pharmacy_fixture()
+      assert {:ok, %Pharmacy{}} = Accounts.delete_pharmacy(pharmacy)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_pharmacy!(pharmacy.id) end
+    end
+
+    test "change_pharmacy/1 returns a pharmacy changeset" do
+      pharmacy = pharmacy_fixture()
+      assert %Ecto.Changeset{} = Accounts.change_pharmacy(pharmacy)
+    end
+  end
 end
