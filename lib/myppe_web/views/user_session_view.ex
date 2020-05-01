@@ -6,11 +6,18 @@ defmodule MyppeWeb.UserSessionView do
   #   %{data: render_many(user_sessions, UserSessionView, "user_session.json")}
   # end
 
-  def render("show.json", %{user_session: user_session}) do
-    %{success: true, data: render_one(user_session, UserSessionView, "user_session.json")}
+  def render("show.json", %{user_session: user_session, user: user}) do
+    %{success: true, data: render_one(user_session, UserSessionView, "user_session.json", %{user: user})}
   end
 
-  def render("user_session.json", %{user_session: user_session}) do
-    %{token: user_session.token}
+  def render("user_session.json", %{user_session: user_session, user: user}) do
+    %{token: user_session.token,
+      user: %{
+        email: user.email,
+        id_number: user.id_number,
+        is_malaysian: user.is_malaysian,
+        phone: user.phone
+      }
+    }
   end
 end

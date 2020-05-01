@@ -38,6 +38,11 @@ defmodule Myppe.Accounts do
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
+  Get User by email
+  """
+  def get_user_by_email(email), do: Repo.get_by(User, %{email: email})
+
+  @doc """
   Creates a user.
 
   ## Examples
@@ -223,6 +228,22 @@ defmodule Myppe.Accounts do
   """
   def list_pharmacies do
     Repo.all(Pharmacy)
+  end
+
+  @doc """
+  List pharmacies with ids matching the given list
+  """
+  def list_pharmacies(ids) do
+    list_pharmacies_query(ids)
+    |> Myppe.Repo.all
+  end
+
+  @doc """
+  List pharmacies with ids matching the given list
+  """
+  def list_pharmacies_query(ids) do
+    from ph in Myppe.Accounts.Pharmacy,
+      where: ph.id in ^ids
   end
 
   @doc """
