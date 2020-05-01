@@ -9,14 +9,14 @@ defmodule MyppeWeb.UserSessionController do
   action_fallback MyppeWeb.FallbackController
 
   def create(conn, %{"user" => attrs}) do
-    user = Auth.get_user_by_email!(attrs["email"])
+    user = Myppe.Accounts.get_user_by_email(attrs["email"])
     case Argon2.check_pass(user, attrs["password"]) do
       {:ok, user} ->
         {:ok, session} = Auth.create_user_session(%{user_id: user.id})
         conn
         |> put_status(:created)
         |> put_resp_header("location", Routes.user_session_path(conn, :show, session))
-        |> render("show.json", user_session: session)
+        |> render("show.json", user_session: session, user: user)
       {:error, message} ->
         conn
         |> put_status(:unauthorized)

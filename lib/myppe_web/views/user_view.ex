@@ -14,6 +14,8 @@ defmodule MyppeWeb.UserView do
     %{id: user.id,
       email: user.email,
       phone: user.phone,
-      id_number: user.id_number}
+      id_number: user.id_number,
+      is_malaysian: user.is_malaysian
+    }
   end
 end
