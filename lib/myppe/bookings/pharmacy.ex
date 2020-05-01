@@ -3,7 +3,22 @@ defmodule Myppe.Bookings.Pharmacy do
   import Ecto.Changeset
 
   schema "pharmacies" do
+    field :address_line1, :string
+    field :address_line2, :string
+    field :cashier_counter, :integer
+    field :display_name, :string
+    field :group, :string
+    field :is_retail, :boolean, default: false
+    field :license_number, :string
+    field :pharmacy_type, :string
+    field :postcode, :string
+    field :size, :string
+    field :social_media_other, :string
+    field :social_media_website, :string
+    field :social_media_whatsapp, :string
+    field :state, :string
     field :name, :string
+
 
     belongs_to :admin, Myppe.Bookings.Admin
     has_one :inventory, Myppe.Bookings.Inventory
