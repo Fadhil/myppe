@@ -21,7 +21,16 @@ defmodule MyppeWeb.SearchView do
       social_media_other: pharmacy.social_media_other,
       social_media_website: pharmacy.social_media_website,
       social_media_whatsapp: pharmacy.social_media_whatsapp,
-      state: pharmacy.state
+      state: pharmacy.state,
+      stocks: render_many(pharmacy.stocks, SearchView, "stock.json", as: :stock)
+    }
+  end
+
+  def render("stock.json", %{stock: stock}) do
+    %{
+      code: stock.product.code,
+      name: stock.product.name,
+      quantity: stock.quantity
     }
   end
 end
