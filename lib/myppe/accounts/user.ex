@@ -5,6 +5,7 @@ defmodule Myppe.Accounts.User do
   schema "users" do
     field :email, :string
     field :id_number, :string
+    field :is_malaysian, :boolean
     field :password, :string, virtual: true
     field :password_hash, :string
     field :phone, :string
