@@ -231,6 +231,22 @@ defmodule Myppe.Accounts do
   end
 
   @doc """
+  List pharmacies with ids matching the given list
+  """
+  def list_pharmacies(ids) do
+    list_pharmacies_query(ids)
+    |> Myppe.Repo.all
+  end
+
+  @doc """
+  List pharmacies with ids matching the given list
+  """
+  def list_pharmacies_query(ids) do
+    from ph in Myppe.Accounts.Pharmacy,
+      where: ph.id in ^ids
+  end
+
+  @doc """
   Gets a single pharmacy.
 
   Raises `Ecto.NoResultsError` if the Pharmacy does not exist.

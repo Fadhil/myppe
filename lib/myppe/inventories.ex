@@ -23,6 +23,41 @@ defmodule Myppe.Inventories do
   end
 
   @doc """
+  Lists Inventories with stock of a given list of products (codes)
+  """
+  def list_pharmacies_with_stock(product_codes) do
+    list_pharmacies_with_stock_query(product_codes)
+    |> Myppe.Repo.all()
+    |> Myppe.Repo.preload(:stocks)
+    |> Enum.filter(fn p -> has_all_products_in_stock(p, product_codes) end)
+  end
+
+  def has_all_products_in_stock(pharmacy, product_codes) do
+    product_codes
+    |> Enum.reduce(true, fn(code, acc) ->
+      acc && has_product_in_stock(pharmacy, code)
+    end)
+  end
+
+  def has_product_in_stock(pharmacy, product_code) do
+    product = get_product_by_code(product_code)
+    has_stock(pharmacy, product)
+  end
+
+  @doc """
+  Returns a query that lists Inventories with stock of a given list of products (codes)
+  """
+  def list_pharmacies_with_stock_query(product_codes) do
+    from ph in Myppe.Inventories.Pharmacy,
+      join: i in assoc(ph, :inventory),
+      join: st in assoc(i, :stocks),
+      join: p in assoc(st, :product),
+      where: p.code in ^product_codes,
+      where: st.quantity > 0,
+      distinct: true
+  end
+
+  @doc """
   Gets a single pharmacy.
 
   Raises `Ecto.NoResultsError` if the Pharmacy does not exist.
@@ -376,6 +411,15 @@ defmodule Myppe.Inventories do
 
   """
   def get_stock!(id), do: Repo.get!(Stock, id)
+
+  @doc """
+  Returns true if the pharmacy has this product in stock.
+  Otherwise false
+  """
+  def has_stock(pharmacy, product) do
+    stock = get_stock(pharmacy, product)
+    stock.quantity > 0
+  end
 
   @doc """
   Gets stock for a specific product from pharmacy's inventory

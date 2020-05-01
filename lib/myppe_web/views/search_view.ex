@@ -10,8 +10,8 @@ defmodule MyppeWeb.SearchView do
     %{
       id: pharmacy.id,
       name: pharmacy.display_name,
-      address_line1: pharmacy.addres_line1,
-      address_line2: pharmacy.addres_line2,
+      address_line1: pharmacy.address_line1,
+      address_line2: pharmacy.address_line2,
       cashier_counter: pharmacy.cashier_counter,
       group: pharmacy.group,
       is_retail: pharmacy.is_retail,
