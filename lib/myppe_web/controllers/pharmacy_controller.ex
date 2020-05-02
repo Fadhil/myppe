@@ -7,7 +7,9 @@ defmodule MyppeWeb.PharmacyController do
   action_fallback MyppeWeb.FallbackController
 
   def index(conn, _params) do
-    pharmacies = Bookings.list_pharmacies()
+    pharmacies =
+      Bookings.list_pharmacies()
+      |> Myppe.Repo.preload([stocks: [:product]])
     render(conn, "index.json", pharmacies: pharmacies)
   end
 
