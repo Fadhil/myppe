@@ -277,6 +277,21 @@ defmodule Myppe.Bookings do
       where: t.quarter == ^quarter
   end
 
+  def get_timeslot_for_pharmacy(pharmacy_id, slot_timeslot_id) do
+    {slot_id, quarter, date} = slot_timeslot_id |> extract_slot_details()
+    get_timeslot_for_pharmacy_query(pharmacy_id, slot_id, quarter)
+    |> Myppe.Repo.one()
+  end
+
+  def get_timeslot_for_pharmacy_query(pharmacy_id, slot_id, quarter) do
+    from t in Myppe.Bookings.Timeslot,
+      join: s in assoc(t, :slot),
+      join: p in assoc(s, :pharmacy),
+      where: p.id == ^pharmacy_id,
+      where: s.slot_id == ^slot_id,
+      where: t.quarter == ^quarter
+  end
+
   @doc """
   Creates a timeslot.
 
@@ -972,8 +987,6 @@ defmodule Myppe.Bookings do
     end
   end
 
-  @max_bookings_per_timeslot 5
-
   @doc """
   Gets details for available slot hours based on opening_hours and user
   selected slot preference
@@ -1060,7 +1073,6 @@ defmodule Myppe.Bookings do
     case get_slot(pharmacy, slot_id) do
       nil ->
         {:ok, slot} = create_slot(attrs)
-        slot
       slot ->
         {:ok, slot}
     end
