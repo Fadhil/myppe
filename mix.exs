@@ -20,7 +20,7 @@ defmodule Myppe.MixProject do
   def application do
     [
       mod: {Myppe.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :timex]
     ]
   end
 
@@ -44,7 +44,8 @@ defmodule Myppe.MixProject do
       {:cors_plug, "~> 2.0"},
       {:comeonin, "~> 5.3"},
       {:argon2_elixir, "~> 2.0"},
-      {:secure_random, "~> 0.5"}
+      {:secure_random, "~> 0.5"},
+      {:timex, "~> 3.5"}
     ]
   end
 

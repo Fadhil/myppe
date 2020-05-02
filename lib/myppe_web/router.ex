@@ -24,6 +24,7 @@ defmodule MyppeWeb.Router do
     resources "/search", SearchController, only: [:create, :index]
     resources "/pharmacies", PharmacyController, only: [:index, :show]
     resources "/products", ProductController, only: [:index]
+    resources "/bookings", BookingController, only: [:index, :show, :create]
   end
 
 

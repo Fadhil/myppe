@@ -3,10 +3,10 @@ defmodule Myppe.Bookings.LineItem do
   import Ecto.Changeset
 
   schema "line_items" do
-    field :price_cents, :integer
     field :quantity, :integer
 
     belongs_to :product, Myppe.Bookings.Product
+    belongs_to :booking, Myppe.Bookings.Booking
 
     timestamps()
   end
@@ -14,7 +14,7 @@ defmodule Myppe.Bookings.LineItem do
   @doc false
   def changeset(line_item, attrs) do
     line_item
-    |> cast(attrs, [:quantity, :price_cents])
-    |> validate_required([:quantity, :price_cents])
+    |> cast(attrs, [:quantity, :product_id])
+    |> validate_required([:quantity, :product_id])
   end
 end

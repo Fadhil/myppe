@@ -6,6 +6,7 @@ defmodule Myppe.Bookings.Timeslot do
     field :quarter, :integer
 
     belongs_to :slot, Myppe.Bookings.Slot
+    has_many :bookings, Myppe.Bookings.Booking
 
     timestamps()
   end
@@ -13,7 +14,7 @@ defmodule Myppe.Bookings.Timeslot do
   @doc false
   def changeset(timeslot, attrs) do
     timeslot
-    |> cast(attrs, [:quarter])
-    |> validate_required([:quarter])
+    |> cast(attrs, [:quarter, :slot_id])
+    |> validate_required([:quarter, :slot_id])
   end
 end
