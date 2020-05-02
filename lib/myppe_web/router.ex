@@ -23,6 +23,7 @@ defmodule MyppeWeb.Router do
     pipe_through [:api, :authenticate_user]
     resources "/search", SearchController, only: [:create, :index]
     resources "/pharmacies", PharmacyController, only: [:show]
+    resources "/products", ProductController, only: [:index]
   end
 
 
