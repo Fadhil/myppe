@@ -4,6 +4,7 @@ defmodule Myppe.Bookings.Product do
 
   schema "products" do
     field :name, :string
+    field :code, :string
 
     timestamps()
   end
