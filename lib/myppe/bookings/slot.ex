@@ -7,6 +7,7 @@ defmodule Myppe.Bookings.Slot do
     field :slot_id, :integer
 
     belongs_to :pharmacy, Myppe.Bookings.Pharmacy
+    has_many :timeslots, Myppe.Bookings.Timeslot
 
     timestamps()
   end
@@ -14,7 +15,7 @@ defmodule Myppe.Bookings.Slot do
   @doc false
   def changeset(slot, attrs) do
     slot
-    |> cast(attrs, [:slot_id, :date])
+    |> cast(attrs, [:slot_id, :date, :pharmacy_id])
     |> validate_required([:slot_id, :date])
   end
 end

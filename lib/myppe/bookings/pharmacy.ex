@@ -24,6 +24,9 @@ defmodule Myppe.Bookings.Pharmacy do
     has_one :inventory, Myppe.Bookings.Inventory
     has_many :stocks, through: [:inventory, :stocks]
     has_many :opening_hours, Myppe.Bookings.OpeningHour
+    has_many :slots, Myppe.Bookings.Slot
+    has_many :timeslots, through: [:slots, :timeslots]
+    has_many :bookings, through: [:timeslots, :bookings]
 
     timestamps()
   end

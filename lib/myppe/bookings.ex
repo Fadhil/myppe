@@ -3,6 +3,7 @@ defmodule Myppe.Bookings do
   The Booking context.
   """
 
+
   import Ecto.Query, warn: false
   alias Myppe.Repo
 
@@ -134,6 +135,22 @@ defmodule Myppe.Bookings do
   def get_slot!(id), do: Repo.get!(Slot, id)
 
   @doc """
+  Gets a slot by pharmacy and slot_id
+  """
+  def get_slot(pharmacy, slot_id) do
+    get_slot_query(pharmacy, slot_id)
+    |> Myppe.Repo.one()
+    |> Myppe.Repo.preload([timeslots: [:bookings]])
+  end
+
+  def get_slot_query(pharmacy, slot_id) do
+    from s in Myppe.Bookings.Slot,
+      join: p in assoc(s, :pharmacy),
+      where: p.id == ^pharmacy.id,
+      where: s.slot_id == ^slot_id
+  end
+
+  @doc """
   Creates a slot.
 
   ## Examples
@@ -214,6 +231,23 @@ defmodule Myppe.Bookings do
   end
 
   @doc """
+  Returns a list of timeslots and bookings for a given pharmacy and slot_id
+  """
+  def list_timeslots_with_bookings(pharmacy, slot_id) do
+    list_timeslots_with_bookings_query(pharmacy, slot_id)
+    |> Myppe.Repo.all()
+    |> Myppe.Repo.preload(:bookings)
+  end
+
+  def list_timeslots_with_bookings_query(pharmacy, slot_id) do
+    from t in Myppe.Bookings.Timeslot,
+      join: s in assoc(t, :slot),
+      join: p in assoc(s, :pharmacy),
+      where: p.id == ^pharmacy.id,
+      where: s.slot_id == ^slot_id
+  end
+
+  @doc """
   Gets a single timeslot.
 
   Raises `Ecto.NoResultsError` if the Timeslot does not exist.
@@ -228,6 +262,37 @@ defmodule Myppe.Bookings do
 
   """
   def get_timeslot!(id), do: Repo.get!(Timeslot, id)
+
+  @doc """
+  Get a timeslot by slot and quarter
+  """
+  def get_timeslot(slot, quarter) do
+    get_timeslot_query(slot, quarter)
+    |> Myppe.Repo.one()
+    |> Myppe.Repo.preload([:bookings, :slot])
+  end
+
+  def get_timeslot_query(slot, quarter) do
+    from t in Myppe.Bookings.Timeslot,
+      join: s in assoc(t, :slot),
+      where: s.id == ^slot.id,
+      where: t.quarter == ^quarter
+  end
+
+  def get_timeslot_for_pharmacy(pharmacy_id, slot_timeslot_id) do
+    {slot_id, quarter, date} = slot_timeslot_id |> extract_slot_details()
+    get_timeslot_for_pharmacy_query(pharmacy_id, slot_id, quarter)
+    |> Myppe.Repo.one()
+  end
+
+  def get_timeslot_for_pharmacy_query(pharmacy_id, slot_id, quarter) do
+    from t in Myppe.Bookings.Timeslot,
+      join: s in assoc(t, :slot),
+      join: p in assoc(s, :pharmacy),
+      where: p.id == ^pharmacy_id,
+      where: s.slot_id == ^slot_id,
+      where: t.quarter == ^quarter
+  end
 
   @doc """
   Creates a timeslot.
@@ -403,6 +468,24 @@ defmodule Myppe.Bookings do
   """
   def list_bookings do
     Repo.all(Booking)
+  end
+
+  @doc """
+  Returns a list of bookings for a given pharmacy and  slot_id. This
+  effectively returns bookings for an entire hour block based on slot_id
+  """
+  def list_bookings(pharmacy, slot_id) do
+    list_bookings_query(pharmacy, slot_id)
+    |> Myppe.Repo.all
+  end
+
+  def list_bookings_query(pharmacy, slot_id) do
+    from b in Myppe.Bookings.Booking,
+      join: t in assoc(b, :timeslot),
+      join: s in assoc(t, :slot),
+      join: p in assoc(s, :pharmacy),
+      where: p.id == ^pharmacy.id,
+      where: s.slot_id == ^slot_id
   end
 
   @doc """
@@ -868,5 +951,260 @@ defmodule Myppe.Bookings do
   """
   def change_admin(%Admin{} = admin) do
     Admin.changeset(admin, %{})
+  end
+
+  @doc """
+  Returns a list of timeslot->slot struct for use with a booking. When a timeslot
+  is chosen that doesn't yet exist, a booking is made along with the timeslot
+  and slot. Further requests for the same timeslot will create a new booking
+  for that timeslot. Each timeslot should only allow a maximum of 5 bookings.
+  """
+  def available_timeslots(pharmacy, preferred_slots) do
+    preferred_slots
+    |> Enum.map(&(get_available_timeslots_for_day_and_time(pharmacy, &1)))
+    |> Enum.filter(&(!is_nil(&1)))
+    |> List.flatten()
+  end
+
+  def get_available_timeslots_for_day_and_time(pharmacy, slot) do
+    if is_open_on_day(pharmacy, slot["day"]) do
+      slot_date = get_date_of_next_occurrence_of_day(slot["day"])
+      slot_times = get_slot_times(pharmacy, slot_date, slot)
+    end
+  end
+
+  @doc """
+  Checks if a pharmacy is open on a given day of the week, based on their
+  opening hours
+  """
+  def is_open_on_day(%{opening_hours: opening_hours} = _pharmacy, day_num) do
+    opening_hour =
+      opening_hours
+      |> Enum.filter(fn s -> s.day == day_num end )
+
+    case opening_hour do
+      [%{is_open: true}] ->
+        true
+      _ ->
+        false
+    end
+  end
+
+  @doc """
+  Returns a list of Hours the shop is open. e.g. If the pharmacy is open from
+  11:00 to 14:00, [11, 12, 13] is returned
+  """
+  def get_open_hours(pharmacy, day_num) do
+    [oh] = pharmacy.opening_hours
+    |> Enum.filter(fn h ->
+      h.day == day_num
+    end)
+
+    [start_hour | _] = oh.start_time |> String.split(":")
+    [end_hour | _] = oh.end_time |> String.split(":")
+    start_hour = start_hour |> String.to_integer()
+    end_hour = end_hour |> String.to_integer()
+    for h <- start_hour..(end_hour - 1), do: h
+  end
+
+  @doc """
+  Gets the hour from a slot_id
+  """
+  def get_hour(slot_id) when is_integer(slot_id) do
+    slot_id
+    |> Integer.to_string()
+    |> get_hour()
+  end
+
+  def get_hour(slot_id) do
+    slot_id
+    |> String.slice(8,2)
+  end
+
+  def get_timeslot_bookings_count(timeslot) do
+    timeslot.bookings
+    |> Enum.count()
+  end
+
+  def get_booking_status(timeslot) do
+    case get_timeslot_bookings_count(timeslot) < Myppe.Bookings.Booking.max_bookings_per_timeslot do
+      true ->
+        "available"
+      false ->
+        "fully_booked"
+    end
+  end
+
+  def timeslot_attrs(timeslot) do
+    timeslot_id = String.to_integer(Integer.to_string(timeslot.slot.slot_id) <> Integer.to_string(timeslot.quarter))
+    %{
+      timeslot_id: timeslot_id,
+      date: timeslot.slot.date,
+      time: get_hour(timeslot.slot.slot_id) <> ":" <> (Integer.to_string((timeslot.quarter - 1) * 15) |> String.pad_leading(2,"0")),
+      status: get_booking_status(timeslot),
+      current_bookings: get_timeslot_bookings_count(timeslot)
+    }
+
+  end
+
+  def timeslot_attrs(slot_id, quarter_id, datetime) do
+    %{
+      timeslot_id: String.to_integer(slot_id <> Integer.to_string(quarter_id)),
+      date: datetime,
+      time: get_hour(slot_id) <> ":" <> (Integer.to_string((quarter_id - 1) * 15) |> String.pad_leading(2,"0")),
+      status: "available",
+      current_bookings: 0
+    }
+  end
+
+  @doc """
+  Gets details for available slot hours based on opening_hours and user
+  selected slot preference
+  """
+  def get_slot_times(pharmacy, datetime, selected_slot) do
+    partial_slot_id = datetime_to_partial_slot_id(datetime)
+    slot_ids =
+      get_open_hours(pharmacy, selected_slot["day"])
+      |> Enum.map(fn h ->
+        h_string = String.pad_leading(Integer.to_string(h), 2, "0")
+        partial_slot_id <> (h_string)
+      end)
+    slots_with_bookings =
+      slot_ids
+      |> Enum.map(fn sid ->
+        case get_slot(pharmacy, sid) do
+          nil ->
+            for quarter_id <- 1..4 do
+              timeslot_attrs(sid, quarter_id, datetime)
+            end
+          slot ->
+            for quarter_id <- 1..4 do
+              case get_timeslot(slot, quarter_id) do
+                nil ->
+                  timeslot_attrs(sid, quarter_id, datetime)
+                timeslot ->
+                  timeslot_attrs(timeslot)
+              end
+            end
+        end
+      end)
+  end
+
+  @doc """
+  Takes a datetime and returns which quarter of the hour the time is (e.g.
+  if the time is 10.00 - 10.14, it is the first quarter of the 10th hour, so 1 is
+  returned. 10.43 returns 3).
+  """
+  def datetime_to_quarter(datetime) do
+    datetime
+    |> Timex.format!("%M", :strftime)
+    |> String.to_integer()
+    |> minute_to_quarter()
+  end
+
+  @doc """
+  Takes the minute part of the time and tells us which quarter of the hour it
+  is in
+  """
+  def minute_to_quarter(minute) do
+    div(minute, 15) + 1
+  end
+
+  @doc """
+  Takes a datetime and returns a partial slot_id in the form YYYYMMDD.
+  """
+  def datetime_to_partial_slot_id(datetime) do
+    datetime
+    |> Timex.format!("%Y%m%d", :strftime)
+  end
+
+  @timex_num_to_day_num%{
+    7 => 0,
+    1 => 1,
+    2 => 2,
+    3 => 3,
+    4 => 4,
+    5 => 5,
+    6 => 6
+
+  }
+
+  @day_num_to_timex_num %{
+    0 => 7,
+    1 => 1,
+    2 => 2,
+    3 => 3,
+    4 => 4,
+    5 => 5,
+    6 => 6
+  }
+
+  def to_local_date(date) do
+    Timex.Timezone.convert(date ,Timex.Timezone.local) |> Timex.beginning_of_day() |> DateTime.to_naive()
+  end
+
+  def get_date_of_next_occurrence_of_day(day_num) do
+    todays_date = Timex.now() |> to_local_date()
+    today = @timex_num_to_day_num[(todays_date |> Timex.weekday)]
+
+    if day_num <= today do
+      todays_date |> Timex.shift(days: 7 - (today - day_num))
+    else
+      todays_date |> Timex.shift(days: (day_num - today))
+    end
+  end
+
+  @doc """
+  Creates a slot for the pharmacy if it doesn't exist. Otherwise just return
+  the existing one.
+  """
+  def create_or_get_slot(pharmacy, date, slot_id) do
+    attrs = %{"slot_id" => slot_id, "date" => date, "pharmacy_id" => pharmacy.id}
+    case get_slot(pharmacy, slot_id) do
+      nil ->
+        {:ok, slot} = create_slot(attrs)
+      slot ->
+        {:ok, slot}
+    end
+  end
+
+  def create_or_get_timeslot(slot, quarter) do
+    {:ok, timeslot} = case get_timeslot(slot, quarter) do
+      nil ->
+        {:ok, timeslot} = create_timeslot(%{quarter: quarter, slot_id: slot.id})
+      timeslot ->
+        {:ok, timeslot}
+    end
+    timeslot =
+      timeslot
+      |> Myppe.Repo.preload([:bookings])
+    {:ok, timeslot}
+  end
+
+  def extract_slot_details(slot_timeslot_id) do
+    slot_id = slot_timeslot_id |> String.slice(0,10)
+    quarter = slot_timeslot_id |> String.slice(10,1)
+    year = slot_id |> String.slice(0,4) |> String.to_integer()
+    month = slot_id |> String.slice(4,2) |> String.to_integer()
+    day = slot_id |> String.slice(6,2) |> String.to_integer()
+    {:ok, date} = NaiveDateTime.new(year, month, day, 0, 0, 0)
+    {slot_id, quarter, date}
+  end
+
+  def create_booking(user, pharmacy_id, slot_timeslot_id, line_items) do
+    {slot_id, quarter, date} = slot_timeslot_id |> extract_slot_details()
+    pharmacy = Myppe.Bookings.get_pharmacy!(pharmacy_id)
+    {:ok, slot} = create_or_get_slot(pharmacy, date, slot_id)
+    {:ok, timeslot} = create_or_get_timeslot(slot, quarter)
+    booking_attrs =
+      %{
+        "timeslot_id" => timeslot.id,
+        "user_id" => user.id,
+        "status" => "new",
+        "line_items" => line_items
+      }
+    %Myppe.Bookings.Booking{}
+    |> Myppe.Bookings.Booking.changeset(booking_attrs)
+    |> Myppe.Repo.insert()
   end
 end
