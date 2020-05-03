@@ -6,10 +6,17 @@ defmodule MyppeWeb.Admin.BookingController do
     quarter = Myppe.Bookings.get_quarter_from_time(time)
     pharmacy = Myppe.Inventories.get_pharmacy_for_user(conn.assigns.current_admin)
     slot = Myppe.Bookings.get_slot(pharmacy, slot_id)
-    timeslot =
-      Myppe.Bookings.get_timeslot(slot, quarter)
-      |> Myppe.Repo.preload([bookings: [timeslot: [:slot]]])
+    bookings =
+      case slot do
+        nil ->
+          []
+        slot ->
+          timeslot =
+            Myppe.Bookings.get_timeslot(slot, quarter)
+            |> Myppe.Repo.preload([bookings: [timeslot: [:slot]]])
+          timeslot.bookings
+      end
     conn
-    |> render("index.json", bookings: timeslot.bookings)
+    |> render("index.json", bookings: bookings)
   end
 end
