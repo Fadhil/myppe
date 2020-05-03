@@ -960,10 +960,11 @@ defmodule Myppe.Bookings do
   for that timeslot. Each timeslot should only allow a maximum of 5 bookings.
   """
   def available_timeslots(pharmacy, preferred_slots) do
-    preferred_slots
+    res = preferred_slots
     |> Enum.map(&(get_available_timeslots_for_day_and_time(pharmacy, &1)))
     |> Enum.filter(&(!is_nil(&1)))
     |> List.flatten()
+    |> Enum.sort(fn (x,y) -> x.timeslot_id <= y.timeslot_id end )
   end
 
   def get_available_timeslots_for_day_and_time(pharmacy, slot) do
@@ -1057,14 +1058,38 @@ defmodule Myppe.Bookings do
     }
   end
 
+  @am [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  @pm [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+
+  def get_user_selected_hours(selected_slot) do
+    [{selected_slot["am"], @am}, {selected_slot["pm"], @pm}]
+    |> Enum.reduce([], fn({selected, hours}, acc) ->
+      case selected do
+        true ->
+          hours ++ acc
+        false ->
+          acc
+      end
+    end)
+  end
+
+
+  def filter_by_selected_hours(open_hours, selected_hours) do
+    open_hours
+    |> Enum.filter(fn h -> h in selected_hours end)
+  end
+
   @doc """
   Gets details for available slot hours based on opening_hours and user
   selected slot preference
   """
   def get_slot_times(pharmacy, datetime, selected_slot) do
+    selected_hours = get_user_selected_hours(selected_slot)
     partial_slot_id = datetime_to_partial_slot_id(datetime)
     slot_ids =
+
       get_open_hours(pharmacy, selected_slot["day"])
+      |> filter_by_selected_hours(selected_hours)
       |> Enum.map(fn h ->
         h_string = String.pad_leading(Integer.to_string(h), 2, "0")
         partial_slot_id <> (h_string)
