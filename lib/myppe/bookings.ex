@@ -135,6 +135,14 @@ defmodule Myppe.Bookings do
   def get_slot!(id), do: Repo.get!(Slot, id)
 
   @doc """
+  Gets a slot id from a date and time
+  """
+  def get_slot_id(date, time) do
+    [hour, _] = String.split(time, ":")
+    String.to_integer(date <> hour)
+  end
+
+  @doc """
   Gets a slot by pharmacy and slot_id
   """
   def get_slot(pharmacy, slot_id) do
@@ -269,7 +277,7 @@ defmodule Myppe.Bookings do
   def get_timeslot(slot, quarter) do
     get_timeslot_query(slot, quarter)
     |> Myppe.Repo.one()
-    |> Myppe.Repo.preload([:bookings, :slot])
+    |> Myppe.Repo.preload([:slot, [bookings: [:user]]])
   end
 
   def get_timeslot_query(slot, quarter) do
@@ -477,6 +485,7 @@ defmodule Myppe.Bookings do
   def list_bookings(pharmacy, slot_id) do
     list_bookings_query(pharmacy, slot_id)
     |> Myppe.Repo.all
+    |> Myppe.Repo.preload([:user])
   end
 
   def list_bookings_query(pharmacy, slot_id) do
@@ -1128,11 +1137,23 @@ defmodule Myppe.Bookings do
   end
 
   @doc """
+  Gets quarter from a time: 10:30 -> 3
+  """
+  def get_quarter_from_time(time) do
+    [_, minute] = String.split(time, ":")
+    minute_to_quarter(String.to_integer(minute))
+  end
+
+  @doc """
   Takes the minute part of the time and tells us which quarter of the hour it
   is in
   """
   def minute_to_quarter(minute) do
     div(minute, 15) + 1
+  end
+
+  def quarter_to_minute(quarter) do
+    ((quarter - 1) * 15) |> Integer.to_string() |> String.pad_leading(2, "0")
   end
 
   @doc """
