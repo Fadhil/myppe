@@ -4,7 +4,7 @@ defmodule Myppe.MixProject do
   def project do
     [
       app: :myppe,
-      version: "0.2.2",
+      version: "0.2.3",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -20,7 +20,7 @@ defmodule Myppe.MixProject do
   def application do
     [
       mod: {Myppe.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :timex]
     ]
   end
 
@@ -44,7 +44,8 @@ defmodule Myppe.MixProject do
       {:cors_plug, "~> 2.0"},
       {:comeonin, "~> 5.3"},
       {:argon2_elixir, "~> 2.0"},
-      {:secure_random, "~> 0.5"}
+      {:secure_random, "~> 0.5"},
+      {:timex, "~> 3.5"}
     ]
   end
 

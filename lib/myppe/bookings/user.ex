@@ -6,13 +6,8 @@ defmodule Myppe.Bookings.User do
     field :email, :string
     field :password_hash, :string
 
-    timestamps()
-  end
+    has_many :bookings, Myppe.Bookings.Booking
 
-  @doc false
-  def changeset(user, attrs) do
-    user
-    |> cast(attrs, [:email, :password_hash])
-    |> validate_required([:email, :password_hash])
+    timestamps()
   end
 end
