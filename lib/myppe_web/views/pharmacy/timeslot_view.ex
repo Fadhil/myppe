@@ -8,8 +8,11 @@ defmodule MyppeWeb.Pharmacy.TimeslotView do
 
   def render("timeslot.json", %{timeslot: timeslot}) do
     %{
-      id: timeslot.id
-
+      current_bookings: timeslot.current_bookings,
+      date: timeslot.date,
+      status: timeslot.status,
+      time: timeslot.time,
+      timeslot_id: timeslot.timeslot_id
     }
   end
 end

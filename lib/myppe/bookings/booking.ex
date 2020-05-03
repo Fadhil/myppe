@@ -25,6 +25,10 @@ defmodule Myppe.Bookings.Booking do
 
   @max_bookings_per_timeslot 5
 
+  def max_bookings_per_timeslot do
+    @max_bookings_per_timeslot
+  end
+
   def validate_timeslot_not_full(
     changeset, %{"timeslot_id" => timeslot_id}
   ) do
