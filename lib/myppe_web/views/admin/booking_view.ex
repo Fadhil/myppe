@@ -8,8 +8,26 @@ defmodule MyppeWeb.Admin.BookingView do
 
   def render("booking.json", %{booking: booking}) do
     %{
-      id: booking.id,
+      booking_id: booking.id,
+      email: booking.user.email,
+      id_type: get_id_type(booking.user),
+      id_number: booking.user.id_number,
+      expired: false,
       status: booking.status
     }
+  end
+
+  def get_id_type(%{is_malaysian: true}) do
+    "IC"
+  end
+
+  def get_id_type(%{is_malaysian: false}) do
+    "Passport/Other"
+  end
+
+  def get_time(booking) do
+    hour = Myppe.Bookings.get_hour(booking.timeslot.slot.slot_id)
+    minute = Myppe.Bookings.quarter_to_minute(booking.timeslot.quarter)
+    hour <> ":" <> minute
   end
 end
