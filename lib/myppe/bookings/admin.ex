@@ -8,6 +8,9 @@ defmodule Myppe.Bookings.Admin do
     field :name, :string
 
     has_one :pharmacy, Myppe.Bookings.Pharmacy
+    has_many :slots, through: [:pharmacy, :slots]
+    has_many :timeslots, through: [:slots, :timeslots]
+    has_many :bookings, through: [:timeslots, :bookings]
 
     timestamps()
   end
