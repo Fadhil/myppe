@@ -13,10 +13,18 @@ defmodule MyppeWeb.Admin.BookingController do
         slot ->
           timeslot =
             Myppe.Bookings.get_timeslot(slot, quarter)
-            |> Myppe.Repo.preload([bookings: [timeslot: [:slot]]])
+            |> Myppe.Repo.preload([bookings: [timeslot: [:slot], line_items: [:product]]])
           timeslot.bookings
       end
     conn
     |> render("index.json", bookings: bookings)
+  end
+
+  def show(conn, %{"id" => id}) do
+    booking =
+      Myppe.Bookings.get_booking!(id)
+      |> Myppe.Repo.preload([:user, timeslot: [:slot], line_items: [:product]])
+    conn
+    |> render("show.json", booking: booking)
   end
 end
