@@ -14,8 +14,14 @@ defmodule MyppeWeb.Admin.BookingController do
           timeslot =
             Myppe.Bookings.get_timeslot(slot, quarter)
             |> Myppe.Repo.preload([bookings: [timeslot: [:slot], line_items: [:product]]])
-          timeslot.bookings
+          case timeslot do
+            nil ->
+              []
+            timeslot ->
+              timeslot.bookings
+          end
       end
+    require IEx; IEx.pry
     conn
     |> render("index.json", bookings: bookings)
   end
