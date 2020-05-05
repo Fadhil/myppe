@@ -10,6 +10,8 @@ defmodule Myppe.Bookings.Booking do
     belongs_to :user, Myppe.Bookings.User
     belongs_to :timeslot, Myppe.Bookings.Timeslot
     has_many :line_items, Myppe.Bookings.LineItem
+    has_one :slot, through: [:timeslot, :slot]
+    has_one :pharmacy, through: [:slot, :pharmacy]
 
     timestamps()
   end

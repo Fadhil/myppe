@@ -29,20 +29,37 @@ defmodule MyppeWeb.Admin.BookingController do
   end
 
   def update(conn, %{"id" => id, "status" => status}) do
+    booking = Myppe.Bookings.get_booking!(id)
+      |> Myppe.Repo.preload([:user, :pharmacy, line_items: [:product]])
+    pharmacy = Myppe.Inventories.get_pharmacy!(booking.pharmacy.id)
+    changes =
+      booking.line_items
+      |>  Enum.map(fn i -> %{"code" => i.product.code, "change" => (-1 * i.quantity) } end )
     res =
-      Myppe.Bookings.get_booking!(id)
-      |> Myppe.Repo.preload([:user, line_items: [:product]])
-      |> Myppe.Bookings.update_booking(%{status: status})
+      case status do
+        "success" ->
+          case Myppe.Inventories.update_and_record_stock_changes(pharmacy, changes) do
+            {:ok, _} ->
+                Myppe.Bookings.update_booking(booking, %{status: status})
+            {:error, {:changes, code}, {:error, cs}, _} ->
+              {:error, "#{code} is out of stock"}
+            _ ->
+              {:error, "Something went wrong"}
+          end
+        _ ->
+          Myppe.Bookings.update_booking(booking, %{status: status})
+      end
+
     case res do
       {:ok, updated_booking} ->
         conn
         |> put_resp_header("location", Routes.admin_booking_path(conn, :show, id))
         |> render("show.json", booking: updated_booking)
 
-      {:error, changeset} ->
+      {:error, message} ->
         conn
-        |> put_view(MyppeWeb.ChangesetView)
-        render("error.json", changeset: changeset)
+        |> put_view(MyppeWeb.ErrorView)
+        |> render("error.json", message: message)
     end
   end
 end
