@@ -5,7 +5,7 @@ defmodule MyppeWeb.Admin.InventoryController do
     pharmacy = Myppe.Inventories.get_pharmacy_for_user(conn.assigns.current_admin)
     stocks =
       Myppe.Inventories.list_stocks(pharmacy)
-      |> Myppe.Repo.preload(:product)
+      |> Myppe.Repo.preload([:product, :stock_updates])
     conn
     |> render(:index, stocks: stocks)
   end
@@ -18,7 +18,7 @@ defmodule MyppeWeb.Admin.InventoryController do
       {:ok, _} ->
         stocks =
           Myppe.Inventories.list_stocks(pharmacy)
-          |>Myppe.Repo.preload(:product)
+          |>Myppe.Repo.preload([:product, :stock_updates])
         conn
         |> render(:index, stocks: stocks)
       {:error, _, {:error, cs}, _} ->
