@@ -13,10 +13,36 @@ defmodule MyppeWeb.Admin.BookingController do
         slot ->
           timeslot =
             Myppe.Bookings.get_timeslot(slot, quarter)
-            |> Myppe.Repo.preload([bookings: [timeslot: [:slot]]])
+            |> Myppe.Repo.preload([bookings: [timeslot: [:slot], line_items: [:product]]])
           timeslot.bookings
       end
     conn
     |> render("index.json", bookings: bookings)
+  end
+
+  def show(conn, %{"id" => id}) do
+    booking =
+      Myppe.Bookings.get_booking!(id)
+      |> Myppe.Repo.preload([:user, timeslot: [:slot], line_items: [:product]])
+    conn
+    |> render("show.json", booking: booking)
+  end
+
+  def update(conn, %{"id" => id, "status" => status}) do
+    res =
+      Myppe.Bookings.get_booking!(id)
+      |> Myppe.Repo.preload([:user, line_items: [:product]])
+      |> Myppe.Bookings.update_booking(%{status: status})
+    case res do
+      {:ok, updated_booking} ->
+        conn
+        |> put_resp_header("location", Routes.admin_booking_path(conn, :show, id))
+        |> render("show.json", booking: updated_booking)
+
+      {:error, changeset} ->
+        conn
+        |> put_view(MyppeWeb.ChangesetView)
+        render("error.json", changeset: changeset)
+    end
   end
 end
