@@ -31,7 +31,7 @@ defmodule MyppeWeb.Admin.AdminView do
         social_media_website: admin.pharmacy.social_media_website,
         social_media_whatsapp: admin.pharmacy.social_media_other,
         state: admin.pharmacy.state,
-        opening_hours: Enum.map(admin.pharmacy.opening_hours, &MyppeWeb.AdminSessionView.get_opening_hour_structs/1)
+        opening_hours: Enum.map(admin.pharmacy.opening_hours, &MyppeWeb.Admin.AdminSessionView.get_opening_hour_structs/1)
       }
     }
   end
