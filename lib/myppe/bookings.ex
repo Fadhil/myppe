@@ -139,6 +139,7 @@ defmodule Myppe.Bookings do
   """
   def get_slot_id(date, time) do
     [hour, _] = String.split(time, ":")
+    hour = hour |> String.pad_leading(2, "0")
     String.to_integer(date <> hour)
   end
 
