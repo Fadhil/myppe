@@ -21,7 +21,6 @@ defmodule MyppeWeb.Admin.BookingController do
               timeslot.bookings
           end
       end
-    require IEx; IEx.pry
     conn
     |> render("index.json", bookings: bookings)
   end
