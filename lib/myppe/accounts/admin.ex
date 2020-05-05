@@ -15,6 +15,21 @@ defmodule Myppe.Accounts.Admin do
     social_media_website operating_hours
   )a
 
+  @all_for_update ~w(pharmacy_type pharmacy_size
+    cashier_counter address_line1 address_line2 post_code state moh_store_name
+    moh_license_number moh_is_retail account_display_name account_pharmacy_group
+    account_full_name account_phone social_media_whatsapp social_media_other
+    social_media_website
+  )a
+
+  @required_for_update ~w(pharmacy_type pharmacy_size
+    cashier_counter address_line1 post_code state moh_store_name
+    moh_license_number moh_is_retail account_display_name account_pharmacy_group
+    account_full_name account_phone social_media_whatsapp social_media_other
+    social_media_website
+  )a
+
+
   @required_attributes ~w(email name password_hash phone)a
   schema "admins" do
     field :email, :string
@@ -61,6 +76,20 @@ defmodule Myppe.Accounts.Admin do
     |> cast_assoc(:pharmacy)
     |> validate_required(@required_attributes)
     |> unique_constraint(:email, name: :admins_email_index)
+  end
+
+  def update_changeset(admin, attrs) do
+    attrs = attrs |> map_to_admin
+    admin
+    |> changeset(attrs)
+    |> cast(attrs, @all_for_update)
+    |> validate_required(@required_for_update)
+  end
+
+  def update_admin_changeset(admin, attrs) do
+    admin
+    |> changeset(attrs)
+    |> cast(attrs, [:email, :name, :phone])
   end
 
   def registration_changeset(admin, attrs) do
@@ -133,6 +162,33 @@ defmodule Myppe.Accounts.Admin do
         "name" => changes.moh_store_name,
         "inventory" => %{},
         "opening_hours" => changes.operating_hours
+      }
+    }
+  end
+
+  def map_to_admin_and_pharmacy_attrs(changes) do
+    {
+      %{
+        "email" =>  changes.email,
+        "name" => changes.account_full_name,
+        "phone" => changes.account_phone
+      },
+      %{
+        "address_line1" => changes.address_line1,
+        "address_line2" => (if changes.address_line2, do: changes.address_line2, else: ""),
+        "cashier_counter" => changes.cashier_counter,
+        "display_name" => changes.account_display_name,
+        "group" => changes.account_pharmacy_group,
+        "is_retail" => changes.moh_is_retail,
+        "license_number" => changes.moh_license_number,
+        "pharmacy_type" => changes.pharmacy_type,
+        "postcode" => changes.post_code,
+        "size" => changes.pharmacy_size,
+        "social_media_whatsapp" => changes.social_media_whatsapp,
+        "social_media_other" => changes.social_media_other,
+        "social_media_website" => changes.social_media_website,
+        "state" => changes.state,
+        "name" => changes.moh_store_name
       }
     }
   end

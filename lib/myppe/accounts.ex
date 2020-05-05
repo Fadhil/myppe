@@ -181,9 +181,43 @@ defmodule Myppe.Accounts do
 
   """
   def update_admin(%Admin{} = admin, attrs) do
+    cs =
+      admin
+      |> Admin.update_changeset(attrs)
+    case cs.valid? do
+      true ->
+        admin =
+          admin
+          |> Myppe.Repo.preload(:pharmacy)
+        {admin_attrs, pharmacy_attrs} =
+          cs.changes
+          |> Admin.map_to_admin_and_pharmacy_attrs()
+        update_admin_only(admin, admin_attrs)
+        update_pharmacy_only(admin.pharmacy, pharmacy_attrs)
+        {:ok, admin}
+      false ->
+        {:error, cs}
+    end
+  end
+
+  def update_admin_only(%Admin{} = admin, attrs) do
     admin
-    |> Admin.changeset(attrs)
-    |> Repo.update()
+    |> Admin.update_admin_changeset(attrs)
+    |> Myppe.Repo.update
+  end
+
+  alias Myppe.Accounts.Pharmacy
+
+  def update_pharmacy_only(%Pharmacy{} = pharmacy, attrs) do
+    pharmacy
+    |> Pharmacy.update_changeset(attrs)
+    |> Myppe.Repo.update
+  end
+
+  def separate_attrs(nested_admin_attrs) do
+    pharmacy_attrs = nested_admin_attrs["pharmacy"]
+    admin_attrs = nested_admin_attrs |> Map.delete("pharmacy")
+    {admin_attrs, pharmacy_attrs}
   end
 
   @doc """

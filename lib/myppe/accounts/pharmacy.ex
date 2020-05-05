@@ -38,4 +38,9 @@ defmodule Myppe.Accounts.Pharmacy do
     |> cast_assoc(:opening_hours)
     |> validate_required(@required_attributes)
   end
+
+  def update_changeset(pharmacy, attrs) do
+    pharmacy
+    |> cast(attrs, @all_attributes)
+  end
 end

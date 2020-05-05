@@ -1,6 +1,6 @@
-defmodule MyppeWeb.Admin.AdminSessionView do
+defmodule MyppeWeb.AdminSessionView do
   use MyppeWeb, :view
-  alias MyppeWeb.Admin.AdminSessionView
+  alias MyppeWeb.AdminSessionView
 
   # def render("index.json", %{admin_sessions: admin_sessions}) do
   #   %{data: render_many(admin_sessions, AdminSessionView, "admin_session.json")}
@@ -33,12 +33,12 @@ defmodule MyppeWeb.Admin.AdminSessionView do
         social_media_website: admin.pharmacy.social_media_website,
         social_media_whatsapp: admin.pharmacy.social_media_other,
         state: admin.pharmacy.state,
-        opening_hours: Enum.map(admin.pharmacy.opening_hours, &get_opening_hour_strucst/1)
+        opening_hours: Enum.map(admin.pharmacy.opening_hours, &get_opening_hour_structs/1)
       }
     }
   end
 
-  def get_opening_hour_strucst(opening_hour) do
+  def get_opening_hour_structs(opening_hour) do
     opening_hour
     |> Map.delete(:__meta__)
     |> Map.delete(:pharmacy)
