@@ -22,6 +22,7 @@ defmodule Myppe.Inventories.Pharmacy do
     belongs_to :admin, Myppe.Inventories.Admin
     has_one :inventory, Myppe.Inventories.Inventory
     has_many :stocks, through: [:inventory, :stocks]
+    has_many :stock_updates, through: [:stocks, :stock_updates]
 
     timestamps()
   end

@@ -7,6 +7,8 @@ defmodule Myppe.Inventories.Stock do
 
     belongs_to :inventory, Myppe.Inventories.Inventory
     belongs_to :product, Myppe.Inventories.Product
+
+    has_many :stock_updates, Myppe.Inventories.StockUpdate
     timestamps()
   end
 

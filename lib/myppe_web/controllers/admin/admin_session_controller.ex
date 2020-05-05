@@ -39,7 +39,7 @@ defmodule MyppeWeb.Admin.AdminSessionController do
   def update(conn, %{"id" => id, "admin_session" => admin_session_params}) do
     admin_session = Auth.get_admin_session!(id)
 
-    with {:ok, %adminSession{} = admin_session} <- Auth.update_admin_session(admin_session, admin_session_params) do
+    with {:ok, %AdminSession{} = admin_session} <- Auth.update_admin_session(admin_session, admin_session_params) do
       render(conn, "show.json", admin_session: admin_session)
     end
   end

@@ -40,6 +40,8 @@ defmodule MyppeWeb.Router do
     pipe_through [:api, :authenticate_admin]
     get "/inventory", InventoryController, :index
     put "/inventory", InventoryController, :update
-    resources "/bookings", BookingController, only: [:index, :show, :update]
+    put "/operating_hours", OpeningHoursController, :update
+    resources "/users", AdminController, only: [:show, :update]
+    resources "/bookings", BookingController, only: [:index, :show, :update], as: :admin_booking
   end
 end

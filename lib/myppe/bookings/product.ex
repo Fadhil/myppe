@@ -5,6 +5,8 @@ defmodule Myppe.Bookings.Product do
   schema "products" do
     field :name, :string
     field :code, :string
+    field :image_url, :string
+    field :color, :string
 
     timestamps()
   end

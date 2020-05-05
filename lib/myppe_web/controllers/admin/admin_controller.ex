@@ -27,11 +27,22 @@ defmodule MyppeWeb.Admin.AdminController do
     render(conn, "show.json", admin: admin)
   end
 
-  def update(conn, %{"id" => id, "user" => admin_params}) do
+  def update(conn, %{"id" => id} = admin_params) do
     admin = Accounts.get_admin!(id)
 
     with {:ok, %Admin{} = admin} <- Accounts.update_admin(admin, admin_params) do
-      render(conn, "show.json", admin: admin)
+      admin =
+        admin
+        |> Myppe.Repo.preload([pharmacy: [:opening_hours]])
+      conn
+      |> put_status(:accepted)
+      |> render("show.json", admin: admin)
+    else
+      {:error, cs} ->
+        conn
+        |> put_status(:bad_request)
+        |> put_view(MyppeWeb.ChangesetView)
+        |> render("error.json", changeset: cs)
     end
   end
 

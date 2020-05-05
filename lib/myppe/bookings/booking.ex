@@ -10,6 +10,8 @@ defmodule Myppe.Bookings.Booking do
     belongs_to :user, Myppe.Bookings.User
     belongs_to :timeslot, Myppe.Bookings.Timeslot
     has_many :line_items, Myppe.Bookings.LineItem
+    has_one :slot, through: [:timeslot, :slot]
+    has_one :pharmacy, through: [:slot, :pharmacy]
 
     timestamps()
   end
@@ -21,6 +23,12 @@ defmodule Myppe.Bookings.Booking do
     |> cast_assoc(:line_items)
     |> validate_required([:status, :user_id, :timeslot_id])
     |> validate_timeslot_not_full(attrs)
+  end
+
+  def update_changeset(user_booking, attrs) do
+    user_booking
+    |> cast(attrs, [:status])
+    |> validate_required([:status])
   end
 
   @max_bookings_per_timeslot 5

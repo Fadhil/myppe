@@ -498,84 +498,84 @@ defmodule Myppe.Bookings do
   end
 
   @doc """
-  Gets a single user_booking.
+  Gets a single booking.
 
   Raises `Ecto.NoResultsError` if the User booking does not exist.
 
   ## Examples
 
-      iex> get_user_booking!(123)
+      iex> get_booking!(123)
       %Booking{}
 
-      iex> get_user_booking!(456)
+      iex> get_booking!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_user_booking!(id), do: Repo.get!(Booking, id)
+  def get_booking!(id), do: Repo.get!(Booking, id)
 
   @doc """
-  Creates a user_booking.
+  Creates a booking.
 
   ## Examples
 
-      iex> create_user_booking(%{field: value})
+      iex> create_booking(%{field: value})
       {:ok, %Booking{}}
 
-      iex> create_user_booking(%{field: bad_value})
+      iex> create_booking(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user_booking(attrs \\ %{}) do
+  def create_booking(attrs \\ %{}) do
     %Booking{}
     |> Booking.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a user_booking.
+  Updates a booking.
 
   ## Examples
 
-      iex> update_user_booking(user_booking, %{field: new_value})
+      iex> update_booking(booking, %{field: new_value})
       {:ok, %Booking{}}
 
-      iex> update_user_booking(user_booking, %{field: bad_value})
+      iex> update_booking(booking, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_user_booking(%Booking{} = user_booking, attrs) do
-    user_booking
-    |> Booking.changeset(attrs)
+  def update_booking(%Booking{} = booking, attrs) do
+    booking
+    |> Booking.update_changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a user_booking.
+  Deletes a booking.
 
   ## Examples
 
-      iex> delete_user_booking(user_booking)
+      iex> delete_booking(booking)
       {:ok, %Booking{}}
 
-      iex> delete_user_booking(user_booking)
+      iex> delete_booking(booking)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_user_booking(%Booking{} = user_booking) do
-    Repo.delete(user_booking)
+  def delete_booking(%Booking{} = booking) do
+    Repo.delete(booking)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user_booking changes.
+  Returns an `%Ecto.Changeset{}` for tracking booking changes.
 
   ## Examples
 
-      iex> change_user_booking(user_booking)
+      iex> change_booking(booking)
       %Ecto.Changeset{source: %Booking{}}
 
   """
-  def change_user_booking(%Booking{} = user_booking) do
-    Booking.changeset(user_booking, %{})
+  def change_booking(%Booking{} = booking) do
+    Booking.changeset(booking, %{})
   end
 
   alias Myppe.Bookings.LineItem

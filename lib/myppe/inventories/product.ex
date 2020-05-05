@@ -5,6 +5,8 @@ defmodule Myppe.Inventories.Product do
   schema "products" do
     field :code, :string
     field :name, :string
+    field :image_url, :string
+    field :color, :string
 
     timestamps()
   end
@@ -12,7 +14,7 @@ defmodule Myppe.Inventories.Product do
   @doc false
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [:name, :code])
+    |> cast(attrs, [:name, :code, :image_url, :color])
     |> validate_required([:name, :code])
   end
 end
