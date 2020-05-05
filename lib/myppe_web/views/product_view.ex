@@ -11,7 +11,9 @@ defmodule MyppeWeb.ProductView do
   def render("product.json", %{product: product}) do
     %{id: product.id,
       name: product.name,
-      code: product.code
+      code: product.code,
+      image_url: product.image_url,
+      color: product.color
     }
   end
 end
