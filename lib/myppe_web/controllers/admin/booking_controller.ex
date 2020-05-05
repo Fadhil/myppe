@@ -27,4 +27,22 @@ defmodule MyppeWeb.Admin.BookingController do
     conn
     |> render("show.json", booking: booking)
   end
+
+  def update(conn, %{"id" => id, "status" => status}) do
+    res =
+      Myppe.Bookings.get_booking!(id)
+      |> Myppe.Repo.preload([:user, line_items: [:product]])
+      |> Myppe.Bookings.update_booking(%{status: status})
+    case res do
+      {:ok, updated_booking} ->
+        conn
+        |> put_resp_header("location", Routes.admin_booking_path(conn, :show, id))
+        |> render("show.json", booking: updated_booking)
+
+      {:error, changeset} ->
+        conn
+        |> put_view(MyppeWeb.ChangesetView)
+        render("error.json", changeset: changeset)
+    end
+  end
 end

@@ -23,6 +23,12 @@ defmodule Myppe.Bookings.Booking do
     |> validate_timeslot_not_full(attrs)
   end
 
+  def update_changeset(user_booking, attrs) do
+    user_booking
+    |> cast(attrs, [:status])
+    |> validate_required([:status])
+  end
+
   @max_bookings_per_timeslot 5
 
   def max_bookings_per_timeslot do

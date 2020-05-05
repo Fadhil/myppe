@@ -545,7 +545,7 @@ defmodule Myppe.Bookings do
   """
   def update_booking(%Booking{} = booking, attrs) do
     booking
-    |> Booking.changeset(attrs)
+    |> Booking.update_changeset(attrs)
     |> Repo.update()
   end
 

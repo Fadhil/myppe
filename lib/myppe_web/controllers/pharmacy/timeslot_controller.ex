@@ -15,6 +15,7 @@ defmodule MyppeWeb.Pharmacy.TimeslotController do
       Myppe.Bookings.get_pharmacy!(pharmacy_id)
       |> Myppe.Repo.preload(:opening_hours)
     timeslots = Myppe.Bookings.available_timeslots(pharmacy, preferred_slots)
+
     conn
     |> put_resp_header("location", Routes.pharmacy_timeslot_path(conn, :index, pharmacy_id))
     |> render("index.json", timeslots: timeslots)
