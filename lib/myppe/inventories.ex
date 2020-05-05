@@ -781,4 +781,24 @@ defmodule Myppe.Inventories do
     end)
     {:ok, :initialised_products}
   end
+
+  def update_product_image_and_colors() do
+    updates = [
+      {"three_ply", "https://myppe-assets.s3-ap-southeast-1.amazonaws.com/react-native/3-ply-mask.svg", "98F73A"},
+
+      {"gloves", "https://myppe-assets.s3-ap-southeast-1.amazonaws.com/react-native/gloves.svg", "31F3F9"},
+
+      {"sanitizer", "https://myppe-assets.s3-ap-southeast-1.amazonaws.com/react-native/hand-sanitisers.svg", "FB68C0"},
+
+      {"n95", "https://myppe-assets.s3-ap-southeast-1.amazonaws.com/react-native/n95-mask.svg", "FFBA5C" }
+    ]
+
+    updates
+    |> Enum.each(fn {code, image_url, color} ->
+      product = get_product_by_code(code)
+      product
+      |> Myppe.Inventories.update_product(%{image_url: image_url, color: color})
+
+    end)
+  end
 end
