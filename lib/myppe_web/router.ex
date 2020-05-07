@@ -27,6 +27,7 @@ defmodule MyppeWeb.Router do
     end
     resources "/products", ProductController, only: [:index]
     resources "/bookings", BookingController, only: [:index, :show, :create]
+    resources "/reports", ReportController, only: [:create]
   end
 
 
