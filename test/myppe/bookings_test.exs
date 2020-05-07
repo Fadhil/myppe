@@ -89,4 +89,120 @@ defmodule Myppe.BookingsTest do
       assert %Ecto.Changeset{} = Bookings.change_pharmacy(pharmacy)
     end
   end
+
+  describe "reports" do
+    alias Myppe.Bookings.Report
+
+    @valid_attrs %{report_type: 42}
+    @update_attrs %{report_type: 43}
+    @invalid_attrs %{report_type: nil}
+
+    def report_fixture(attrs \\ %{}) do
+      {:ok, report} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Bookings.create_report()
+
+      report
+    end
+
+    test "list_reports/0 returns all reports" do
+      report = report_fixture()
+      assert Bookings.list_reports() == [report]
+    end
+
+    test "get_report!/1 returns the report with given id" do
+      report = report_fixture()
+      assert Bookings.get_report!(report.id) == report
+    end
+
+    test "create_report/1 with valid data creates a report" do
+      assert {:ok, %Report{} = report} = Bookings.create_report(@valid_attrs)
+      assert report.report_type == 42
+    end
+
+    test "create_report/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Bookings.create_report(@invalid_attrs)
+    end
+
+    test "update_report/2 with valid data updates the report" do
+      report = report_fixture()
+      assert {:ok, %Report{} = report} = Bookings.update_report(report, @update_attrs)
+      assert report.report_type == 43
+    end
+
+    test "update_report/2 with invalid data returns error changeset" do
+      report = report_fixture()
+      assert {:error, %Ecto.Changeset{}} = Bookings.update_report(report, @invalid_attrs)
+      assert report == Bookings.get_report!(report.id)
+    end
+
+    test "delete_report/1 deletes the report" do
+      report = report_fixture()
+      assert {:ok, %Report{}} = Bookings.delete_report(report)
+      assert_raise Ecto.NoResultsError, fn -> Bookings.get_report!(report.id) end
+    end
+
+    test "change_report/1 returns a report changeset" do
+      report = report_fixture()
+      assert %Ecto.Changeset{} = Bookings.change_report(report)
+    end
+  end
+
+  describe "reported_items" do
+    alias Myppe.Bookings.ReportedItem
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def reported_item_fixture(attrs \\ %{}) do
+      {:ok, reported_item} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Bookings.create_reported_item()
+
+      reported_item
+    end
+
+    test "list_reported_items/0 returns all reported_items" do
+      reported_item = reported_item_fixture()
+      assert Bookings.list_reported_items() == [reported_item]
+    end
+
+    test "get_reported_item!/1 returns the reported_item with given id" do
+      reported_item = reported_item_fixture()
+      assert Bookings.get_reported_item!(reported_item.id) == reported_item
+    end
+
+    test "create_reported_item/1 with valid data creates a reported_item" do
+      assert {:ok, %ReportedItem{} = reported_item} = Bookings.create_reported_item(@valid_attrs)
+    end
+
+    test "create_reported_item/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Bookings.create_reported_item(@invalid_attrs)
+    end
+
+    test "update_reported_item/2 with valid data updates the reported_item" do
+      reported_item = reported_item_fixture()
+      assert {:ok, %ReportedItem{} = reported_item} = Bookings.update_reported_item(reported_item, @update_attrs)
+    end
+
+    test "update_reported_item/2 with invalid data returns error changeset" do
+      reported_item = reported_item_fixture()
+      assert {:error, %Ecto.Changeset{}} = Bookings.update_reported_item(reported_item, @invalid_attrs)
+      assert reported_item == Bookings.get_reported_item!(reported_item.id)
+    end
+
+    test "delete_reported_item/1 deletes the reported_item" do
+      reported_item = reported_item_fixture()
+      assert {:ok, %ReportedItem{}} = Bookings.delete_reported_item(reported_item)
+      assert_raise Ecto.NoResultsError, fn -> Bookings.get_reported_item!(reported_item.id) end
+    end
+
+    test "change_reported_item/1 returns a reported_item changeset" do
+      reported_item = reported_item_fixture()
+      assert %Ecto.Changeset{} = Bookings.change_reported_item(reported_item)
+    end
+  end
 end

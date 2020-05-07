@@ -1254,4 +1254,196 @@ defmodule Myppe.Bookings do
     |> Myppe.Bookings.Booking.changeset(booking_attrs)
     |> Myppe.Repo.insert()
   end
+
+  alias Myppe.Bookings.Report
+
+  @doc """
+  Returns the list of reports.
+
+  ## Examples
+
+      iex> list_reports()
+      [%Report{}, ...]
+
+  """
+  def list_reports do
+    Repo.all(Report)
+  end
+
+  @doc """
+  Gets a single report.
+
+  Raises `Ecto.NoResultsError` if the Report does not exist.
+
+  ## Examples
+
+      iex> get_report!(123)
+      %Report{}
+
+      iex> get_report!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_report!(id), do: Repo.get!(Report, id)
+
+  @doc """
+  Creates a report.
+
+  ## Examples
+
+      iex> create_report(%{field: value})
+      {:ok, %Report{}}
+
+      iex> create_report(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_report(attrs \\ %{}) do
+    %Report{}
+    |> Report.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a report.
+
+  ## Examples
+
+      iex> update_report(report, %{field: new_value})
+      {:ok, %Report{}}
+
+      iex> update_report(report, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_report(%Report{} = report, attrs) do
+    report
+    |> Report.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a report.
+
+  ## Examples
+
+      iex> delete_report(report)
+      {:ok, %Report{}}
+
+      iex> delete_report(report)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_report(%Report{} = report) do
+    Repo.delete(report)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking report changes.
+
+  ## Examples
+
+      iex> change_report(report)
+      %Ecto.Changeset{source: %Report{}}
+
+  """
+  def change_report(%Report{} = report) do
+    Report.changeset(report, %{})
+  end
+
+  alias Myppe.Bookings.ReportedItem
+
+  @doc """
+  Returns the list of reported_items.
+
+  ## Examples
+
+      iex> list_reported_items()
+      [%ReportedItem{}, ...]
+
+  """
+  def list_reported_items do
+    Repo.all(ReportedItem)
+  end
+
+  @doc """
+  Gets a single reported_item.
+
+  Raises `Ecto.NoResultsError` if the Reported item does not exist.
+
+  ## Examples
+
+      iex> get_reported_item!(123)
+      %ReportedItem{}
+
+      iex> get_reported_item!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_reported_item!(id), do: Repo.get!(ReportedItem, id)
+
+  @doc """
+  Creates a reported_item.
+
+  ## Examples
+
+      iex> create_reported_item(%{field: value})
+      {:ok, %ReportedItem{}}
+
+      iex> create_reported_item(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_reported_item(attrs \\ %{}) do
+    %ReportedItem{}
+    |> ReportedItem.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a reported_item.
+
+  ## Examples
+
+      iex> update_reported_item(reported_item, %{field: new_value})
+      {:ok, %ReportedItem{}}
+
+      iex> update_reported_item(reported_item, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_reported_item(%ReportedItem{} = reported_item, attrs) do
+    reported_item
+    |> ReportedItem.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a reported_item.
+
+  ## Examples
+
+      iex> delete_reported_item(reported_item)
+      {:ok, %ReportedItem{}}
+
+      iex> delete_reported_item(reported_item)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_reported_item(%ReportedItem{} = reported_item) do
+    Repo.delete(reported_item)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking reported_item changes.
+
+  ## Examples
+
+      iex> change_reported_item(reported_item)
+      %Ecto.Changeset{source: %ReportedItem{}}
+
+  """
+  def change_reported_item(%ReportedItem{} = reported_item) do
+    ReportedItem.changeset(reported_item, %{})
+  end
 end
