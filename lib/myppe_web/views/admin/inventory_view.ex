@@ -27,15 +27,18 @@ defmodule MyppeWeb.Admin.InventoryView do
 
   def get_stock_history(stock) do
     values = []
-    values = values ++ [stock.quantity]
+    values = values ++ [{stock.quantity, stock.updated_at}]
     values =
       stock.stock_updates
       |> Enum.filter(fn x -> Timex.after?(x.inserted_at, Timex.now |> Timex.shift(days: -2)) end)
       |> Enum.sort(fn x,y -> Timex.after?(x.inserted_at, y.inserted_at) end)
       |> Enum.reduce(values, fn s, acc ->
-        last_value = List.last(acc)
-        acc = acc ++ [last_value - s.change]
+        last_values = List.last(acc)
+        last_value = elem(last_values, 0)
+        new_value = last_value - s.change
+        acc ++ [{new_value, s.inserted_at}]
       end)
+      |> Enum.map(fn {q,u} -> [q,u] end)
   end
 end
 
